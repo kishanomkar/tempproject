@@ -1,6 +1,8 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import connectToDb from "./db/db"; 
+import connectToDb from "./db/db.js";
+import userRoutes from "./routes/user.route.js";
+import e from "express";
 connectToDb();
 
 const userapp = express();
@@ -8,5 +10,6 @@ const userapp = express();
 
 userapp.use(express.json());
 userapp.use(cookieParser());
+userapp.use("/api/user", userRoutes);
 
-module.exports = userapp;
+export default userapp;

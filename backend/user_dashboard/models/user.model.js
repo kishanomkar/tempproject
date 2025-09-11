@@ -1,101 +1,166 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 import dotenv from "dotenv";
 dotenv.config();    
 
-const userSchema = new mongoose.Schema({
+const foreignUserSchema = new mongoose.Schema({
 userId:{
-    type:String,
-    required:true,
-    
+    type: String,
+    required: true
 },
-fullName:{
-    type:String,
-    required:true
+fullname:{
+    type: String,
+    required: true
 },
 gender:{
-    type:String,
-    required:true
+    type: String,
+    required: true
 },
-dateOfBirth:{
-    type:Date,
-    required:true
+date_of_birth:{
+    type: Date,
+    required: true
 },
 nationality:{
-    type:String,
-    required:true
+    type: String,
+    required: true
 },
-identityDocuments:{
-    aadharCard:{
-        type:String,
-    },
+identityDocument:{
     passportNumber:{
-        type:String,
-    },
-    drivingLicense:{
-        type:String,
+        type: String,
+        required: true,
+        unique: true
     },
     visaNumber:{
-        type:String,
+        type: String,
+        required: true,
+        unique: true
+    },
+
+},
+contactInformation:{
+    email:{
+        type: String,
+        required: true,
+    },
+    phoneNumber:{
+        type: String,
+    }
+
+},
+travelDetails:{
+    arrivalDate:{
+        type: Date,
+        required: true
+    },
+    departureDate:{
+        type: Date,
+        required: true
+    },
+    flightNumber:{
+        type: String,
+        required: true
+    },
+    originCountry:{
+        type: String,
+        required: true
+    },
+    destination:{
+        type: String,
+        required: true
+    }
+
+},
+password:{
+    type: String,
+    required: true
+},
+smartTouristId:{
+    type: String,
+    required: true,
+    unique: true
+}
+
+
+}, {timestamps:true});
+
+const domesticUserSchema = new mongoose.Schema({
+    userId:{
+    type: String,
+    required: true
+},
+fullname:{
+    type: String,
+    required: true
+},
+gender:{
+    type: String,
+    required: true
+},
+date_of_birth:{
+    type: Date,
+    required: true
+},
+nationality:{
+    type: String,
+    required: true
+},
+identityDocument:{
+    aadharNumber:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    drivingLicenseNumber:{
+        type: String,
+        
+        unique: true
     },
 },
 contactInformation:{
     email:{
-        type:String,
-        required:true,
+        type: String,
+        required: true,
     },
     phoneNumber:{
-        type:String,
-        required:true,
-        unique:true,
-    },
+        type: String,
+    }
+
 },
 travelDetails:{
     arrivalDate:{
-        type:Date,
-        
+        type: Date,
+        required: true
     },
     departureDate:{
-        type:Date,
+        type: Date,
         
     },
-    filghtNumber:{
-        type:String,
+    flightNumber:{
+        type: String,
         
     },
-    originCountry:{
-        type:String,
-        required:true,
-    },
+    
     destination:{
-        type:String,
-        required:true,
-    },
-    hotel:{
-        type:String,
-    },
+        type: String,
+        required: true
+    }
+
 },
-    
+password:{
+    type: String,
+    required: true
+},
 smartTouristId:{
-    type:String,
-    unique:true,
+    type: String,
+    required: true,
+    unique: true
 }
-    
+
 
 }, {timestamps:true});
 
-userSchema.statics.hashPassword = async function(password){
-    return await bcrypt.hash(password,30)
-}
-userSchema.methods.isValidPassword = async function(hashPassword,password){
-    return await bcrypt.compare(password,hashPassword)
-}   
+export const foreignUser = mongoose.model('ForeignUser', foreignUserSchema);
+export const domesticUser = mongoose.model('DomesticUser', domesticUserSchema);
 
-userSchema.methods.generateAuthToken = function(){
-    const token = jwt.sign({_id:this._id, email:this.email}, process.env.JWT_SECRET, {expiresIn:'7d'});
-    return token;
-}
-const User = mongoose.model('User', userSchema);
 
-export default User;
+
