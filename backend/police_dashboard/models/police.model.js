@@ -52,7 +52,7 @@ const policeSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 policeSchema.statics.hashPassword = async function(password){
-    return await bcrypt.hash(password,30)
+    return await bcrypt.hash(password,10)
 }
 
 policeSchema.methods.isValidPassword = async function(hashPassword,password){
