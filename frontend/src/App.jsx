@@ -1,9 +1,14 @@
-import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PoliceRegister from './police_dashboard/pages/PoliceRegister';
 
 function App() {
   return (
-    <div className='bg-red-500 h-40'>App</div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/police/registerpolice" element={<PoliceRegister />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
