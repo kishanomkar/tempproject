@@ -1,12 +1,13 @@
 import {foreignUser, domesticUser} from "../models/user.model.js";
-import pkg from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
-const {bcrypt} = pkg;
+
 
 async function registerForeignUser(req, res) {
-    const {fullname, userId, smartTouristId } = req.body;
+   const { fullname, userId, smartTouristId, email, phoneNumber, } = req.body;
+
 
     const isAlreadyRegistered = await foreignUser.findOne({ userId });
 
@@ -32,7 +33,8 @@ async function registerForeignUser(req, res) {
 
 }
 async function registerDomesticUser(req, res) {
-    const {fullname, userId, smartTouristId } = req.body; 
+    const { fullname, userId, smartTouristId, email, phoneNumber, password } = req.body;
+ 
     const isAlreadyRegistered = await domesticUser.findOne({ userId });
 
     if (isAlreadyRegistered) {

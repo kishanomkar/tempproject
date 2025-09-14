@@ -1,5 +1,5 @@
-import { foriengUser } from "../models/user.model.js";
-import { domesticUser } from "../models/user.model.js";
+import { foreignUser, domesticUser } from "../models/user.model.js";
+
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
@@ -15,7 +15,7 @@ async function authForeignUser(req, res, next) {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await foriengUser.findById(decoded.id);
+        const user = await foreignUser.findById(decoded.id);
 
         req.user = user;
 

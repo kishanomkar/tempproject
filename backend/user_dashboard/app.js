@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import connectToDb from "./db/db.js";
 import userRoutes from "./routes/user.route.js";
-import e from "express";
+
 connectToDb();
 
 const userapp = express();
