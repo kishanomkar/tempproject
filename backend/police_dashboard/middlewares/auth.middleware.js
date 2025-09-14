@@ -12,13 +12,13 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).send('Access denied. No token provided.');
     }
 
-    // Check if token is blacklisted in MongoDB
-    const BlacklistedToken = mongoose.model('BlacklistedToken', new mongoose.Schema({ token: String }));
-    const isBlacklisted = await BlacklistedToken.findOne({ token });
-    if (isBlacklisted) {
-      res.clearCookie('token'); // clear cookie properly
-      return res.status(401).send('Access denied. Token blacklisted.');
-    }
+    // // Check if token is blacklisted in MongoDB
+    // const BlacklistedToken = mongoose.model('BlacklistedToken', new mongoose.Schema({ token: String }));
+    // const isBlacklisted = await BlacklistedToken.findOne({ token });
+    // if (isBlacklisted) {
+    //   res.clearCookie('token'); // clear cookie properly
+    //   return res.status(401).send('Access denied. Token blacklisted.');
+    // }
 
     // Verify JWT
     const verified = jwt.verify(token, process.env.JWT_SECRET);

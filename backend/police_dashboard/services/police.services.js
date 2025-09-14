@@ -24,3 +24,4 @@ export const registerPolice = async ({
 
     return newPolice
 }
+
