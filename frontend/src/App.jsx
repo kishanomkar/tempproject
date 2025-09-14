@@ -1,9 +1,24 @@
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Profile from './pages/Profile'
+import Blog from './pages/Blog'
+import Alerts from './pages/Alerts'
+import 'leaflet/dist/leaflet.css';
+import HomeMap from './pages/HomeMap'
 
-function App() {
+
+
+export default function App() {
   return (
-    <div className='bg-red-500 h-40'>App</div>
+    <div>
+<Routes>
+
+<Route path='/profile' element={<Profile/>} />
+<Route path='/blog' element={<Blog/>} />
+<Route path='/alerts' element={<Alerts/>} />
+<Route path='/home-map' element={<HomeMap/>} />
+</Routes>
+
+    </div>
   )
 }
-
-export default App
