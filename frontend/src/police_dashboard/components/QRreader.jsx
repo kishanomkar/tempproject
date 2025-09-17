@@ -60,11 +60,35 @@ const QRCamera = () => {
     const [result, setResult] = useState("No QR scanned yet");
     const scannerRef = useRef(null); // Store scanner instance
 
+    const sendScannedDataToBackend = async (data) => {
+        try {
+            const response = await fetch('http://localhost:3000/your-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include', // if you need to include cookies
+                body: JSON.stringify(data)
+            });
+            const resData = await response.json();
+            if (response.ok) {
+                console.log("Data sent successfully:", resData);
+            } else {
+                console.error("Error from server:", resData.message || "Unknown error");
+            }
+        } catch (error) {
+            console.error("Failed to send scanned data:", error);
+        }
+    };
+
     const onNewScanResult = (decodedText, decodedResult) => {
         try {
             scanned_data = JSON.parse(decodedText);
             console.log("Scanned Data:", scanned_data);
             setResult("✅ Scanned successfully! Check console.");
+
+            // Send data to backend
+            sendScannedDataToBackend(scanned_data);
 
             // Stop the scanner after scanning
             if (scannerRef.current) {
@@ -77,7 +101,6 @@ const QRCamera = () => {
             console.error("Failed to parse QR data:", e);
             setResult("⚠️ Scanned, but invalid JSON format.");
 
-            // Still stop the scanner
             if (scannerRef.current) {
                 scannerRef.current.clear().catch(err => {
                     console.error("Failed to clear scanner:", err);

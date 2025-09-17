@@ -7,6 +7,7 @@ import HomeMap from './pages/HomeMap'
 import PoliceRegister from './police_dashboard/pages/PoliceRegister';
 import TouristDashboard from './police_dashboard/pages/Nazar';
 import TouristProfile from './police_dashboard/pages/TouristProfile';
+import QRCamera from './police_dashboard/components/QRreader';
 
 
 
@@ -22,6 +23,7 @@ export default function App() {
         <Route path='/policeee' element={<PoliceRegister />} />
         <Route path='/nazar' element={<TouristDashboard />} />
         <Route path='/tourist/:id' element={<TouristProfile />} />
+        <Route path='/data' element={<QRCamera />} />
       </Routes>
     </div>
   );
