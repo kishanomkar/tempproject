@@ -1,10 +1,29 @@
 import { MapContainer, TileLayer, Circle, Marker, Popup, useMapEvents } from 'react-leaflet';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import L from 'leaflet';
 
 export default function HomeMap() {
+  const [currentLocation, setCurrentLocation] = useState({ latitude: null, longitude: null });
   const [position, setPosition] = useState([28.6139, 77.2090]); // Dilli ki location hai with danger jone
   const [insideDanger, setInsideDanger] = useState(false);
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error fetching location:", error);
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
 
   // Ye danger jone ka cicle hai abhu uhi example lagaya hau
   const dangerZone = {
@@ -14,22 +33,34 @@ export default function HomeMap() {
 
   // User location tarcking 
   function LocationTracker() {
-    useMapEvents({
+    const map = useMapEvents({
       locationfound(e) {
-        setPosition([e.latlng.lat, e.latlng.lng]);
+        const newPos = [e.latlng.lat, e.latlng.lng];
+        setPosition(newPos);
 
         const distance = L.latLng(e.latlng).distanceTo(L.latLng(dangerZone.center));
         setInsideDanger(distance <= dangerZone.radius);
       },
     });
+
+    // Start locating once map is ready
+    useEffect(() => {
+      map.locate({ watch: true, setView: true, enableHighAccuracy: true });
+    }, [map]);
+
     return null;
   }
+
+  // New: Get initial location when component mounts
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <MapContainer
-        center={position}
-        zoom={15}
+        center={currentLocation.latitude ? [currentLocation.latitude, currentLocation.longitude] : position}
+        zoom={13}
         style={{ height: "100%", width: "100%" }}
       >
         {/* free tiles from OpenStreetMap */}
@@ -39,9 +70,11 @@ export default function HomeMap() {
         />
 
         {/* user marker */}
-        <Marker position={position}>
-          <Popup>You are here</Popup>
-        </Marker>
+        {currentLocation.latitude && currentLocation.longitude && (
+          <Marker position={[currentLocation.latitude, currentLocation.longitude]}>
+            <Popup>You are here</Popup>
+          </Marker>
+        )}
 
         {/* danger zone circle */}
         <Circle
