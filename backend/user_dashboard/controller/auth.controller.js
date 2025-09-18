@@ -6,7 +6,9 @@ dotenv.config();
 
 
 async function registerForeignUser(req, res) {
-   const { fullname, userId, smartTouristId, email, phoneNumber, } = req.body;
+
+   const { fullname, userId, smartTouristId, email, phoneNumber,
+    } = req.body;
 
 
     const isAlreadyRegistered = await foreignUser.findOne({ userId });
@@ -59,8 +61,11 @@ async function registerDomesticUser(req, res) {
 }
 
 async function loginForeignUSer(req, res) {
-    const { userId, password } = req.body;
-    const user = await foreignUser.findOne({ userId });
+    const {email, userId, password,visaNumber,phoneNumber } = req.body;
+    const user = await foreignUser.findOne({ userId,
+      "contactInformation.email": email,
+      "identityDocument.visaNumber": visaNumber,
+     });
     if (!user) {
         return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -75,8 +80,11 @@ async function loginForeignUSer(req, res) {
 }
 
 async function loginDomesticUser(req, res) {
-    const { userId, password } = req.body;
-    const user = await domesticUser.findOne({ userId });
+    const {email, userId, password, aadharNumber,phoneNumber } = req.body;
+    const user = await domesticUser.findOne({ userId,
+      "contactInformation.email": email,
+      "identityDocument.aadharNumber": aadharNumber,
+    });
     if (!user) {
         return res.status(400).json({ message: 'Invalid credentials' });
     }
