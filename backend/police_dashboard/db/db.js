@@ -5,7 +5,7 @@ dotenv.config();
 function connect() {
     const connection = process.env.MONGO_URI;
     mongoose.connect(connection).then(()=>{
-        console.log("Connected to MongoDB");
+        console.log("Connected to Police MongoDB");
         
 
     }).catch((err)=>{
