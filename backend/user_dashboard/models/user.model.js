@@ -4,10 +4,6 @@ import dotenv from "dotenv";
 dotenv.config();    
 
 const foreignTouristsSchema = new mongoose.Schema({
-userId:{
-    type: String,
-    required: true
-},
 fullname:{
     type: String,
     required: true
@@ -84,10 +80,7 @@ smartTouristId:{
 }, {timestamps:true});
 
 const domesticTouristsSchema = new mongoose.Schema({
-    userId:{
-    type: String,
-    required: true
-},
+    
 fullname:{
     type: String,
     required: true
