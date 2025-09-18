@@ -7,7 +7,7 @@ dotenv.config();
 
 async function registerForeignUser(req, res) {
 
-   const { fullname, userId, smartTouristId, email, phoneNumber,
+   const { fullname, userId, smartTouristId, email, phoneNumber,visaNumber, password
     } = req.body;
 
 
@@ -23,6 +23,7 @@ async function registerForeignUser(req, res) {
             email,
             phoneNumber
         },
+        identityDocument: { visaNumber },
         password: hashPassword,
         userId,
         smartTouristId
@@ -35,7 +36,7 @@ async function registerForeignUser(req, res) {
 
 }
 async function registerDomesticUser(req, res) {
-    const { fullname, userId, smartTouristId, email, phoneNumber, password } = req.body;
+    const { fullname, userId, smartTouristId, email, phoneNumber, password, aadharNumber } = req.body;
  
     const isAlreadyRegistered = await domesticUser.findOne({ userId });
 
@@ -49,6 +50,7 @@ async function registerDomesticUser(req, res) {
             email,
             phoneNumber
         },
+        identityDocument: { aadharNumber },
         password: hashPassword,
         userId,
         smartTouristId
