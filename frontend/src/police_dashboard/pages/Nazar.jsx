@@ -7,7 +7,7 @@ const getTourists = async () => {
   try {
     const response = await fetch('http://localhost:3000/total-tourist', {
       method: 'GET',
-      credentials: 'include', // Include cookies if required
+      credentials: 'include',
     });
     const data = await response.json();
     if (response.ok) {

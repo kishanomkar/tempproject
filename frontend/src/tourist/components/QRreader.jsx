@@ -1,5 +1,8 @@
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { useState, useRef } from 'react';
+import { Html5QrcodeScanner } from "html5-qrcode";
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { processKeyword } from "./SecretIdGenerator";
+import { getSecretId } from "./SecretIdGenerator";
 
 // Global variable to store scanned data
 export let scanned_data = null;
@@ -9,18 +12,10 @@ const qrcodeRegionId = "html5qr-code-full-region";
 // Creates the configuration object for Html5QrcodeScanner.
 const createConfig = ({ fps, qrbox, aspectRatio, disableFlip }) => {
     let config = {};
-    if (fps) {
-        config.fps = fps;
-    }
-    if (qrbox) {
-        config.qrbox = qrbox;
-    }
-    if (aspectRatio) {
-        config.aspectRatio = aspectRatio;
-    }
-    if (disableFlip !== undefined) {
-        config.disableFlip = disableFlip;
-    }
+    if (fps) config.fps = fps;
+    if (qrbox) config.qrbox = qrbox;
+    if (aspectRatio) config.aspectRatio = aspectRatio;
+    if (disableFlip !== undefined) config.disableFlip = disableFlip;
     return config;
 };
 
@@ -32,13 +27,17 @@ const Html5QrcodePlugin = ({
     verbose,
     qrCodeSuccessCallback,
     qrCodeErrorCallback,
-    setScannerInstance
+    setScannerInstance,
 }) => {
     const startScanner = () => {
         const config = createConfig({ fps, qrbox, aspectRatio, disableFlip });
         const isVerbose = verbose === true;
 
-        const html5QrcodeScanner = new Html5QrcodeScanner(qrcodeRegionId, config, isVerbose);
+        const html5QrcodeScanner = new Html5QrcodeScanner(
+            qrcodeRegionId,
+            config,
+            isVerbose
+        );
         setScannerInstance(html5QrcodeScanner); // Store scanner instance
         html5QrcodeScanner.render(qrCodeSuccessCallback, qrCodeErrorCallback);
     };
@@ -51,24 +50,28 @@ const Html5QrcodePlugin = ({
             >
                 Scan a QR
             </button>
-            <div id={qrcodeRegionId} className="w-72 h-72 border-4 border-blue-300 rounded-lg" />
+            <div
+                id={qrcodeRegionId}
+                className="w-72 h-72 border-4 border-blue-300 rounded-lg"
+            />
         </div>
     );
 };
 
 const QRCamera = () => {
     const [result, setResult] = useState("No QR scanned yet");
-    const scannerRef = useRef(null); // Store scanner instance
+    const scannerRef = useRef(null);
+    const navigate = useNavigate();
 
     const sendScannedDataToBackend = async (data) => {
         try {
-            const response = await fetch('http://localhost:3000/your-endpoint', {
-                method: 'POST',
+            const response = await fetch("http://localhost:3000/your-endpoint", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json",
                 },
-                credentials: 'include', // if you need to include cookies
-                body: JSON.stringify(data)
+                credentials: "include",
+                body: JSON.stringify(data),
             });
             const resData = await response.json();
             if (response.ok) {
@@ -85,14 +88,24 @@ const QRCamera = () => {
         try {
             scanned_data = JSON.parse(decodedText);
             console.log("Scanned Data:", scanned_data);
-            setResult("✅ Scanned successfully! Check console.");
+
+            // ✅ Check if keyword matches "hellow"
+            const id = processKeyword(scanned_data.keyword); // assuming QR JSON has { "keyword": "hellow" }
+            if (id) {
+                console.log("Use this Secret ID:", id);
+                setResult("✅ Secret ID generated! Check console.");
+                // Navigate to /diversion if secret id exists
+                navigate("/diversion");
+            } else {
+                setResult("⚠️ Keyword not valid, no ID generated.");
+            }
 
             // Send data to backend
             sendScannedDataToBackend(scanned_data);
 
             // Stop the scanner after scanning
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(err => {
+                scannerRef.current.clear().catch((err) => {
                     console.error("Failed to clear scanner:", err);
                 });
             }
@@ -102,7 +115,7 @@ const QRCamera = () => {
             setResult("⚠️ Scanned, but invalid JSON format.");
 
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(err => {
+                scannerRef.current.clear().catch((err) => {
                     console.error("Failed to clear scanner:", err);
                 });
             }
