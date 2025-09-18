@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();    
 
-const foreignUserSchema = new mongoose.Schema({
+const foreignTouristsSchema = new mongoose.Schema({
 userId:{
     type: String,
     required: true
@@ -83,7 +83,7 @@ smartTouristId:{
 
 }, {timestamps:true});
 
-const domesticUserSchema = new mongoose.Schema({
+const domesticTouristsSchema = new mongoose.Schema({
     userId:{
     type: String,
     required: true
@@ -159,8 +159,14 @@ smartTouristId:{
 
 }, {timestamps:true});
 
-export const foreignUser = mongoose.model('ForeignUser', foreignUserSchema);
-export const domesticUser = mongoose.model('DomesticUser', domesticUserSchema);
+// ✅ Use existing model if it exists, otherwise create new
+const foreignUser =
+  mongoose.models.ForeignUser ||
+  mongoose.model("ForeignUser", foreignTouristsSchema);
 
+const domesticUser =
+  mongoose.models.DomesticUser ||
+  mongoose.model("DomesticUser", domesticTouristsSchema);
 
+export { foreignUser, domesticUser };
 

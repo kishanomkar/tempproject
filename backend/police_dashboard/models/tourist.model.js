@@ -75,7 +75,11 @@ smartTouristId:{
     type: String,
     required: true,
     unique: true
-}
+},
+location: {
+    lat: { type: Number, default: null },
+    lng: { type: Number, default: null }
+  },
 
 
 }, {timestamps:true});
@@ -148,7 +152,11 @@ smartTouristId:{
     type: String,
     required: true,
     unique: true
-}
+},
+location: {
+    lat: { type: Number, default: null },
+    lng: { type: Number, default: null }
+  },
 
 
 }, {timestamps:true});

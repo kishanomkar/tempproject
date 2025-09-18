@@ -8,6 +8,8 @@ export const registerForeignTourist = async ({
     if (!fullname || !gender || !date_of_birth || !nationality || !identityDocument || !contactInformation || !travelDetails || !password || !smartTouristId) {
         throw new Error("All fields are required");
     }
+
+    
     // You can add password hashing here if needed
     const newTourist = await foreignUser.create({
         fullname,

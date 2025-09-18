@@ -1,27 +1,39 @@
-import express from 'express'
-import morgan from 'morgan'
+import express from 'express';
+import morgan from 'morgan';
 import connect from './db/db.js';
-import router from './routes/police.routes.js';
+import policeRouter from './routes/police.routes.js';
+import touristRouter from './routes/tourist.routes.js'; 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { qrDataStore } from './controller/tourist.controller.js';
+import { getAllTourists } from './services/data.services.js';
+
 connect();
 
-const app = express(); 
+const app = express();
 app.use(cookieParser());
-
 app.use(cors({
-  origin: "http://localhost:5173",  
-  credentials: true                 
+  origin: "http://localhost:5173",
+  credentials: true
 }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(morgan('dev'))
-app.use('/police',router)
+app.use('/police', policeRouter);
+app.use('/tourist', touristRouter); // <-- Add this
 
- 
-app.get('/',(req,res)=>{
-    res.send("Hellow From Gaurdian")
-})
+// Existing routes here...
+app.get('/get-qr-data', (req, res) => {
+  res.status(200).json({
+    foreignQRData: qrDataStore.foreignQRData,
+    domesticQRData: qrDataStore.domesticQRData,
+  });
+});
 
-export default app
+
+app.get('/', (req, res) => {
+  res.send("Hello From Guardian");
+});
+
+export default app;
