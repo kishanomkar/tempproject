@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import connect from './db/db.js';
 import policeRouter from './routes/police.routes.js';
-// import touristRouter from './routes/tourist.routes.js'; 
+import touristRouter from './routes/tourist.routes.js'; 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { qrDataStore } from './controller/tourist.controller.js';

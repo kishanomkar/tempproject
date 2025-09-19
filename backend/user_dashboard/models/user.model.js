@@ -1,156 +1,115 @@
 import mongoose from "mongoose";
-
 import dotenv from "dotenv";
-dotenv.config();    
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const foreignTouristsSchema = new mongoose.Schema({
-fullname:{
-    type: String,
-    required: true
-},
-gender:{
-    type: String,
-    required: true
-},
-date_of_birth:{
-    type: Date,
-    required: true
-},
-nationality:{
-    type: String,
-    required: true
-},
-identityDocument:{
-    passportNumber:{
-        type: String,
-        required: true,
-        unique: true
-    },
-    visaNumber:{
-        type: String,
-        required: true,
-        unique: true
+dotenv.config();
+
+// ---------------- FOREIGN TOURIST SCHEMA ----------------
+const foreignTouristsSchema = new mongoose.Schema(
+  {
+    fullname: { type: String, required: true },
+    gender: { type: String, required: true },
+    date_of_birth: { type: Date, required: true },
+    nationality: { type: String, required: true },
+
+    identityDocument: {
+      passportNumber: { type: String, required: true, unique: true },
+      visaNumber: { type: String, required: true, unique: true },
     },
 
-},
-contactInformation:{
-    email:{
-        type: String,
-        required: true,
+    contactInformation: {
+      email: { type: String, required: true, unique: true },
+      phoneNumber: { type: String },
     },
-    phoneNumber:{
-        type: String,
-    }
 
-},
-travelDetails:{
-    arrivalDate:{
-        type: Date,
-        required: true
+    travelDetails: {
+      arrivalDate: { type: Date, required: true },
+      departureDate: { type: Date, required: true },
+      flightNumber: { type: String, required: true },
+      originCountry: { type: String, required: true },
+      destination: { type: String, required: true },
     },
-    departureDate:{
-        type: Date,
-        required: true
-    },
-    flightNumber:{
-        type: String,
-        required: true
-    },
-    originCountry:{
-        type: String,
-        required: true
-    },
-    destination:{
-        type: String,
-        required: true
-    }
 
-},
-password:{
-    type: String,
-    required: true
-},
-smartTouristId:{
-    type: String,
-    required: true,
-    unique: true
-}
+    password: { type: String, required: true },
+    smartTouristId: { type: String, required: true, unique: true },
+  },
+  { timestamps: true }
+);
 
+// ---------------- DOMESTIC TOURIST SCHEMA ----------------
+const domesticTouristsSchema = new mongoose.Schema(
+  {
+    fullname: { type: String, required: true },
+    gender: { type: String, required: true },
+    date_of_birth: { type: Date, required: true },
+    nationality: { type: String, required: true },
 
-}, {timestamps:true});
-
-const domesticTouristsSchema = new mongoose.Schema({
-    
-fullname:{
-    type: String,
-    required: true
-},
-gender:{
-    type: String,
-    required: true
-},
-date_of_birth:{
-    type: Date,
-    required: true
-},
-nationality:{
-    type: String,
-    required: true
-},
-identityDocument:{
-    aadharNumber:{
-        type: String,
-        required: true,
-        unique: true
+    identityDocument: {
+      aadharNumber: { type: String, required: true, unique: true },
+      drivingLicenseNumber: { type: String, unique: true },
     },
-    drivingLicenseNumber:{
-        type: String,
-        
-        unique: true
-    },
-},
-contactInformation:{
-    email:{
-        type: String,
-        required: true,
-    },
-    phoneNumber:{
-        type: String,
-    }
 
-},
-travelDetails:{
-    arrivalDate:{
-        type: Date,
-        required: true
+    contactInformation: {
+      email: { type: String, required: true, unique: true },
+      phoneNumber: { type: String },
     },
-    departureDate:{
-        type: Date,
-        
+
+    travelDetails: {
+      arrivalDate: { type: Date, required: true },
+      departureDate: { type: Date },
+      flightNumber: { type: String },
+      destination: { type: String, required: true },
     },
-    flightNumber:{
-        type: String,
-        
+
+    password: { type: String, required: true },
+    smartTouristId: { type: String, required: true, unique: true },
+  },
+  { timestamps: true }
+);
+
+// ---------------- METHODS ----------------
+// Foreign
+foreignTouristsSchema.statics.hashPassword = async function (password) {
+  return await bcrypt.hash(password, 10);
+};
+
+foreignTouristsSchema.methods.isValidPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+foreignTouristsSchema.methods.generateAuthToken = function () {
+  return jwt.sign(
+    {
+      id: this._id,
+      email: this.contactInformation.email,
+      smartTouristId: this.smartTouristId,
     },
-    
-    destination:{
-        type: String,
-        required: true
-    }
+    process.env.JWT_SECRET,
+    { expiresIn: "30d" }
+  );
+};
 
-},
-password:{
-    type: String,
-    required: true
-},
-smartTouristId:{
-    type: String,
-    required: true,
-    unique: true
-} 
+// Domestic
+domesticTouristsSchema.statics.hashPassword = async function (password) {
+  return await bcrypt.hash(password, 10);
+};
 
+domesticTouristsSchema.methods.isValidPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
-}, {timestamps:true});
+domesticTouristsSchema.methods.generateAuthToken = function () {
+  return jwt.sign(
+    {
+      id: this._id,
+      email: this.contactInformation.email,
+      smartTouristId: this.smartTouristId,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "30d" }
+  );
+};
 
 // ✅ Use existing model if it exists, otherwise create new
 const foreignUser =
@@ -162,4 +121,3 @@ const domesticUser =
   mongoose.model("DomesticUser", domesticTouristsSchema);
 
 export { foreignUser, domesticUser };
-

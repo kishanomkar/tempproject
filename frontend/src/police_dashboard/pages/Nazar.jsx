@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { useNavigate } from 'react-router-dom';
 
+
 // Function to fetch tourists from the backend
 const getTourists = async () => {
   try {
@@ -175,21 +176,50 @@ export default function TouristDashboard() {
       </div>
 
       {/* Right Panel - Profile */}
-      <div className="lg:w-1/3 bg-white p-6 space-y-6">
-        <div className="bg-gray-50 p-4 rounded-md shadow-sm">
-          <h3 className="text-lg font-semibold mb-3 text-gray-700">Tourist Profile</h3>
-          {hoveredTourist ? (
-            <div className="text-gray-600 space-y-2">
-              <p><span className="font-medium">Name:</span> {hoveredTourist.fullname}</p>
-              <p><span className="font-medium">Type:</span> {hoveredTourist.type}</p>
-              <p><span className="font-medium">Latitude:</span> {hoveredTourist.location.lat.toFixed(5)}</p>
-              <p><span className="font-medium">Longitude:</span> {hoveredTourist.location.lng.toFixed(5)}</p>
-            </div>
-          ) : (
-            <p className="text-gray-500">Hover over a tourist dot to see details</p>
-          )}
-        </div>
+      <div className="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 space-y-6">
+  <div className="bg-gradient-to-r from-blue-50 to-white p-6 rounded-lg shadow-inner border border-gray-100">
+    <h3 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Tourist Profile</h3>
+
+    {hoveredTourist ? (
+      <div className="text-gray-700 space-y-3">
+        <p><span className="font-semibold">Name:</span> {hoveredTourist.fullname || "John Doe"}</p>
+        <p><span className="font-semibold">Type:</span> {hoveredTourist.type || "Domestic"}</p>
+        <p><span className="font-semibold">Gender:</span> {hoveredTourist.gender || "Not specified"}</p>
+        <p><span className="font-semibold">Date of Birth:</span> {hoveredTourist.date_of_birth ? new Date(hoveredTourist.date_of_birth).toLocaleDateString() : "01/01/1990"}</p>
+        <p><span className="font-semibold">Nationality:</span> {hoveredTourist.nationality || "Unknown"}</p>
+
+        {hoveredTourist.type === 'Foreign' ? (
+          <>
+            <p><span className="font-semibold">Passport No:</span> {hoveredTourist.identityDocument?.passportNumber || "P12345678"}</p>
+            <p><span className="font-semibold">Visa No:</span> {hoveredTourist.identityDocument?.visaNumber || "V98765432"}</p>
+          </>
+        ) : (
+          <>
+            <p><span className="font-semibold">Aadhar No:</span> {hoveredTourist.identityDocument?.aadharNumber || "1234-5678-9012"}</p>
+            <p><span className="font-semibold">Driving License:</span> {hoveredTourist.identityDocument?.drivingLicenseNumber || "DL1234567890"}</p>
+          </>
+        )}
+
+        <p><span className="font-semibold">Email:</span> {hoveredTourist.contactInformation?.email || "example@email.com"}</p>
+        <p><span className="font-semibold">Phone:</span> {hoveredTourist.contactInformation?.phoneNumber || "+911234567890"}</p>
+
+        <p><span className="font-semibold">Arrival Date:</span> {hoveredTourist.travelDetails?.arrivalDate ? new Date(hoveredTourist.travelDetails.arrivalDate).toLocaleDateString() : "01/01/2025"}</p>
+        <p><span className="font-semibold">Departure Date:</span> {hoveredTourist.travelDetails?.departureDate ? new Date(hoveredTourist.travelDetails.departureDate).toLocaleDateString() : "07/01/2025"}</p>
+        <p><span className="font-semibold">Destination:</span> {hoveredTourist.travelDetails?.destination || "Unknown City"}</p>
+        <p><span className="font-semibold">Flight No:</span> {hoveredTourist.travelDetails?.flightNumber || "FL123"}</p>
+        {hoveredTourist.type === 'Foreign' && (
+          <p><span className="font-semibold">Origin Country:</span> {hoveredTourist.travelDetails?.originCountry || "USA"}</p>
+        )}
+
+        <p><span className="font-semibold">Smart ID:</span> {hoveredTourist.smartTouristId || "STID1001"}</p>
+        <p><span className="font-semibold">Location:</span> Lat {hoveredTourist.location?.lat?.toFixed(5) || "0.00000"}, Lng {hoveredTourist.location?.lng?.toFixed(5) || "0.00000"}</p>
       </div>
+    ) : (
+      <p className="text-gray-400 italic">Hover over a tourist dot to see details</p>
+    )}
+  </div>
+</div>
+
     </div>
   );
 }
