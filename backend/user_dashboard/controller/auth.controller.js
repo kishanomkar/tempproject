@@ -4,20 +4,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-<<<<<<< HEAD
-// ------------------ Helper: Generate JWT ------------------
-function generateToken(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-}
-
-// ------------------ REGISTER FOREIGN ------------------
-export async function registerForeignUser(req, res) {
-=======
 
 async function registerForeignUser(req, res) {
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   try {
     const {
       fullname,
@@ -29,23 +17,7 @@ async function registerForeignUser(req, res) {
       visaNumber, 
     } = req.body;
 
-<<<<<<< HEAD
-    if (!fullname || !contactInformation?.email || !password) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // Check duplicate by passport / visa / email
-    const isAlreadyRegistered = await foreignUser.findOne({
-      $or: [
-        { "identityDocument.passportNumber": identityDocument?.passportNumber },
-        { "identityDocument.visaNumber": identityDocument?.visaNumber },
-        { "contactInformation.email": contactInformation?.email },
-      ],
-    });
-
-=======
     const isAlreadyRegistered = await foreignUser.findOne({ userId });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
     if (isAlreadyRegistered) {
       return res.status(400).json({ message: "User already registered" });
     }
@@ -61,16 +33,6 @@ async function registerForeignUser(req, res) {
       smartTouristId,
     });
 
-<<<<<<< HEAD
-    const token = generateToken(newForeignUser._id);
-
-    res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
-    res.status(201).json({
-      message: "User registered successfully",
-      user: newForeignUser,
-      token,
-    });
-=======
     const token = jwt.sign({ id: ForeignUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -79,7 +41,6 @@ async function registerForeignUser(req, res) {
     res
       .status(201)
       .json({ message: "User registered successfully", ForeignUser });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -97,22 +58,7 @@ async function registerDomesticUser(req, res) {
       aadharNumber, 
     } = req.body;
 
-<<<<<<< HEAD
-    if (!fullname || !contactInformation?.email || !password) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    // Check duplicate by aadhar / email
-    const isAlreadyRegistered = await domesticUser.findOne({
-      $or: [
-        { "identityDocument.aadharNumber": identityDocument?.aadharNumber },
-        { "contactInformation.email": contactInformation?.email },
-      ],
-    });
-
-=======
     const isAlreadyRegistered = await domesticUser.findOne({ userId });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
     if (isAlreadyRegistered) {
       return res.status(400).json({ message: "User already registered" });
     }
@@ -127,16 +73,6 @@ async function registerDomesticUser(req, res) {
       smartTouristId,
     });
 
-<<<<<<< HEAD
-    const token = generateToken(newDomesticUser._id);
-
-    res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
-    res.status(201).json({
-      message: "User registered successfully",
-      user: newDomesticUser,
-      token,
-    });
-=======
     const token = jwt.sign({ id: DomesticUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -145,23 +81,15 @@ async function registerDomesticUser(req, res) {
     res
       .status(201)
       .json({ message: "User registered successfully", DomesticUser });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }
 
 
-<<<<<<< HEAD
-    if (!password) {
-      return res.status(400).json({ message: "Password is required" });
-    }
-
-=======
 async function loginForeignUSer(req, res) {
   try {
     const { email, userId, password, visaNumber } = req.body; 
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
     const user = await foreignUser.findOne({
       userId,
       "contactInformation.email": email,
@@ -179,33 +107,19 @@ async function loginForeignUSer(req, res) {
 
     const token = generateToken(user._id);
 
-<<<<<<< HEAD
     res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
     res.status(200).json({
       message: "User logged in successfully",
       user,
       token,
     });
-=======
-    res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ message: "User logged in successfully", user });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    
 }
 
 
-<<<<<<< HEAD
-    if (!password) {
-      return res.status(400).json({ message: "Password is required" });
-    }
-
-=======
 async function loginDomesticUser(req, res) {
   try {
     const { email, userId, password, aadharNumber } = req.body; 
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
     const user = await domesticUser.findOne({
       userId,
       "contactInformation.email": email,
@@ -223,29 +137,15 @@ async function loginDomesticUser(req, res) {
 
     const token = generateToken(user._id);
 
-<<<<<<< HEAD
-    res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
-    res.status(200).json({
-      message: "User logged in successfully",
-      user,
-      token,
-    });
-=======
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({ message: "User logged in successfully", user });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }
 
-<<<<<<< HEAD
-// ------------------ LOGOUT ------------------
-export async function logoutForeignUser(req, res) {
-=======
 
 async function logoutForeignUser(req, res) {
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   try {
     res.clearCookie("token", { httpOnly: true, sameSite: "strict" }); 
     res.status(200).json({ message: "Logged out successfully" });
@@ -254,11 +154,7 @@ async function logoutForeignUser(req, res) {
   }
 }
 
-<<<<<<< HEAD
-export async function logoutDomesticUser(req, res) {
-=======
 async function logoutDomesticUser(req, res) {
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
   try {
     res.clearCookie("token", { httpOnly: true, sameSite: "strict" }); 
     res.status(200).json({ message: "Logged out successfully" });
@@ -267,29 +163,6 @@ async function logoutDomesticUser(req, res) {
   }
 }
 
-<<<<<<< HEAD
-// ------------------ PROFILE ------------------
-export async function foreignUserProfileController(req, res) {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    res.status(200).json({ user: req.user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
-export async function domesticUserProfileController(req, res) {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    res.status(200).json({ user: req.user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-=======
 
 async function foreignUserProfileController(req, res) {
   const user = req.user;
@@ -299,7 +172,6 @@ async function foreignUserProfileController(req, res) {
 async function domesticUserProfileController(req, res) {
   const user = req.user;
   res.status(200).json({ user });
->>>>>>> b23d60a9a522fdc12d6bcb0e81bdf3a1a6aafc9d
 }
 
 export default {
