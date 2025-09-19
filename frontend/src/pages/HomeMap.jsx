@@ -21,7 +21,7 @@ export default function HomeMap() {
         const distance = L.latLng(e.latlng).distanceTo(L.latLng(dangerZone.center));
         setInsideDanger(distance <= dangerZone.radius);
       },
-    });
+    }); 
     return null;
   }
 
