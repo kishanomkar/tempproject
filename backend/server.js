@@ -15,5 +15,5 @@ police_server.listen(police_port,()=>{
 }) 
 
 user_server.listen(user_port,()=>{
-    console.log(`Tourist Server is running on port ${user_port}`);
+    console.log(`User Server is running on port ${user_port}`);
 })
