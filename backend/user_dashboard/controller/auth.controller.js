@@ -105,15 +105,15 @@ async function loginForeignUSer(req, res) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = generateToken(user._id);
 
-    res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ message: "User logged in successfully", user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
+    res.status(200).json({
+      message: "User logged in successfully",
+      user,
+      token,
+    });
+    
 }
 
 
@@ -135,9 +135,7 @@ async function loginDomesticUser(req, res) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = generateToken(user._id);
 
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({ message: "User logged in successfully", user });
