@@ -44,16 +44,17 @@ const Html5QrcodePlugin = ({
 
     return (
         <div className="flex flex-col items-center space-y-4">
+
+            <div
+                id={qrcodeRegionId}
+                className="w-72 h-72  rounded-lg shadow-lg"
+            />
             <button
                 onClick={startScanner}
                 className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
             >
                 Scan a QR
             </button>
-            <div
-                id={qrcodeRegionId}
-                className="w-72 h-72 border-4 border-blue-300 rounded-lg"
-            />
         </div>
     );
 };
@@ -142,10 +143,6 @@ const QRCamera = () => {
                 qrCodeErrorCallback={onScanError}
                 setScannerInstance={setScannerInstance}
             />
-            <div className="mt-6 p-4 bg-white rounded-lg shadow-md w-full max-w-sm text-center">
-                <h3 className="text-lg font-medium text-gray-700">Status:</h3>
-                <p className="mt-2 text-gray-600">{result}</p>
-            </div>
         </div>
     );
 };
