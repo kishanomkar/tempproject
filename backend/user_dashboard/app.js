@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import connectToDb from "./db/db.js";
 import userRoutes from "./routes/user.route.js";
 import cors from 'cors'
-import dotenv from 'dotenv'
 
 dotenv.config();
 
@@ -14,7 +13,6 @@ connectToDb();
 const userapp = express();
 
 
-dotenv.config()
 userapp.use(cors());
 
 // ------------------ MIDDLEWARE ------------------

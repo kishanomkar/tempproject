@@ -11,16 +11,13 @@ import ForeignTouristRegister from './tourist/pages/ForeignTouristRegister';
 import DomesticTouristRegister from './tourist/pages/DomesticTouristRegister';
 import ForeignTouristLogin from './tourist/pages/ForeignTouristLogin';
 import DomesticTouristLogin from './tourist/pages/DomesticTouristLogin';
-<<<<<<< HEAD
-import AskAI from './tourist/components/AskAI';
-=======
 import TrackingMembers from './tourist/pages/TrackingMembers';
 import { useState } from 'react';
 import PanicButton from './tourist/components/PanicButton';
 import SafetyScore from './tourist/components/SafetyScore';
 import Home from './tourist/pages/Home';
+import AskAI from './tourist/components/AskAI';
 
->>>>>>> 0e526ee719d14fb605e49391e742b811af238d6b
 
 
 export default function App() {

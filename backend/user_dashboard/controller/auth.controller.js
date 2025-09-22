@@ -17,7 +17,7 @@ async function registerForeignUser(req, res) {
       visaNumber, 
     } = req.body;
 
-    const isAlreadyRegistered = await foreignUser.findOne({ userId });
+    const isAlreadyRegistered = await foreignUser.findOne({ email });
     if (isAlreadyRegistered) {
       return res.status(400).json({ message: "User already registered" });
     }
