@@ -13,6 +13,7 @@ import ForeignTouristRegister from './tourist/pages/ForeignTouristRegister';
 import DomesticTouristRegister from './tourist/pages/DomesticTouristRegister';
 import ForeignTouristLogin from './tourist/pages/ForeignTouristLogin';
 import DomesticTouristLogin from './tourist/pages/DomesticTouristLogin';
+import AskAI from './tourist/components/AskAI';
 
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         <Route path='/nazar' element={<TouristDashboard />} />
         <Route path='/tourist/:id' element={<TouristProfile />} />
         <Route path='/data' element={<QRCamera />} />
+        <Route path='/askAI' element={<AskAI />} />
         <Route path='/diversion' element={<SelectionPage />} />
         <Route path='/registerForeignTourist' element={<ForeignTouristRegister />} />
         <Route path='/registerDomesticTourist' element={<DomesticTouristRegister />} />

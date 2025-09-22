@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { useNavigate } from 'react-router-dom';
+// import FullscreenProtector from '../components/FullscreenProtector';
+import ScreenshotProtector from '../components/ScreenshotProtector';
+
+
 
 
 // Function to fetch tourists from the backend
@@ -75,6 +79,7 @@ export default function TouristDashboard() {
       alert("Geolocation is not supported by your browser.");
     }
   };
+
 
   // Fetch tourists from backend and combine them into one list
   const fetchTourists = async () => {
@@ -166,6 +171,8 @@ export default function TouristDashboard() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
+     {/* <FullscreenProtector redirectTo="/home" /> */}
+     <ScreenshotProtector />
       {/* Map Area */}
       <div className="lg:w-2/3 bg-gray-100 p-6 border-r border-gray-300">
         <h3 className="text-xl font-semibold mb-4 text-gray-700">Map of area under police station</h3>

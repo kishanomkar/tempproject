@@ -114,8 +114,10 @@ async function loginForeignUSer(req, res) {
       token,
     });
     
+  }catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
-
 
 async function loginDomesticUser(req, res) {
   try {
