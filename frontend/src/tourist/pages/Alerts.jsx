@@ -58,15 +58,9 @@ const Alerts = () => {
   return (
     <div className="bg-gray-100 min-h-screen font-sans">
       {/* Header */}
-      <div className="bg-white shadow-sm p-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">Journey Updates</h1>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 text-gray-500">
-          <path fillRule="evenodd" d="M5.337 21.782A9.75 9.75 0 0112 2.25c2.408 0 4.654.717 6.516 1.968a.75.75 0 01-.482 1.341A8.25 8.25 0 0012 3.75a8.25 8.25 0 00-7.857 5.77 4.714 4.714 0 012.872.962.75.75 0 01-.194 1.353A8.243 8.243 0 0012 17.25a8.243 8.243 0 004.898-1.666.75.75 0 01.996 1.134A9.753 9.753 0 0112 18.75a9.752 9.752 0 01-6.75-2.617v1.86a.75.75 0 01-1.5 0v-2.75A.75.75 0 014.25 15h.75a.75.75 0 01-.75-.75V11.25a.75.75 0 01.75-.75H5a.75.75 0 01.75.75V15h.75a.75.75 0 01-.75.75h-.75V11.25a.75.75 0 01.75-.75h.75a.75.75 0 01.75.75V15h.75a.75.75 0 01.75.75v2.75a.75.75 0 01-1.5 0v-1.86A9.753 9.753 0 0112 21.75c-1.838 0-3.553-.615-4.908-1.658a.75.75 0 01-.482-1.341z" clipRule="evenodd" />
-        </svg>
-      </div>
 
       {/* Updates List */}
-      <div className="p-4 space-y-4 sm:p-6 lg:p-8">
+      <div className="p-4 space-y-4 sm:p-3 lg:p-4">
         {updates.map((update, index) => (
           <div key={index} className="bg-white p-4 rounded-lg shadow-sm flex items-start gap-4">
             {/* Icon */}
