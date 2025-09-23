@@ -1,35 +1,46 @@
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 
 let transcript = "";
-let alertFlag = false; 
+let alertFlag = false;
+let permissionDenied = false;
+let recognition = null;
 
 if (SpeechRecognition) {
-  const recognition = new SpeechRecognition();
+  recognition = new SpeechRecognition();
 
-  recognition.lang = "en-US"; // ✅ set one language; can be changed dynamically
+  recognition.lang = "en-US";
   recognition.interimResults = false;
-  recognition.continuous = true; // keep listening until stopped manually
+  recognition.continuous = true;
 
-  recognition.start();
-
+  recognition.start()
+  
   recognition.onresult = (event) => {
     transcript = event.results[event.results.length - 1][0].transcript.trim();
     console.log("You said:", transcript);
 
-    if (transcript.toLowerCase() === "guardian help help") {
+    if (transcript.toLowerCase().includes("guardian help help")) {
+      // ✅ Always trigger alertFlag (no one-time lock)
       alertFlag = true;
-      alert("🚨 Emergency command detected!");
+      console.log("🚨 Emergency command detected!");
     }
   };
 
   recognition.onend = () => {
-    console.log("Recognition ended. Restarting...");
-    recognition.start(); 
+    console.log("Recognition ended.");
+    if (!permissionDenied) {
+      console.log("Restarting...");
+      recognition.start(); // auto-restart forever
+    }
   };
 
   recognition.onerror = (event) => {
-    console.error("Error occurred in recognition:", event.error);
-    if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+    console.error("Error in recognition:", event.error);
+    if (
+      event.error === "not-allowed" ||
+      event.error === "service-not-allowed"
+    ) {
+      permissionDenied = true;
       window.alert("Microphone permission denied!");
     }
   };
@@ -37,10 +48,24 @@ if (SpeechRecognition) {
   console.error("SpeechRecognition is not supported in this browser.");
 }
 
+// Control functions
+export function startRecognition() {
+  if (recognition && !permissionDenied) {
+    recognition.start();
+  } else {
+    console.error("SpeechRecognition not available or permission denied.");
+  }
+}
+
+// Accessors
 export function getTranscript() {
   return transcript;
 }
 
 export function getAlert() {
-  return alertFlag; 
+  return alertFlag;
+}
+
+export function resetAlert() {
+  alertFlag = false;
 }

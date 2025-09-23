@@ -1,38 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { getTranscript, getAlert } from "./SpeechRecognition";
+
+
+
+import React, { useEffect, useState, useRef } from "react";
+import {
+  startRecognition,
+  getTranscript,
+  getAlert,
+  resetAlert,
+} from "./speechRecognition";
 
 const AskAI = () => {
   const [text, setText] = useState("");
   const [emergency, setEmergency] = useState(false);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    // ✅ Start recognition ONCE, and let speechRecognition.js handle restarts
+    startRecognition();
+
+    // Poll transcript + alert flag every second
+    intervalRef.current = setInterval(() => {
       setText(getTranscript());
       setEmergency(getAlert());
     }, 1000);
 
-    return () => clearInterval(interval);
+    // Cleanup only clears interval, NOT recognition
+    return () => {
+      clearInterval(intervalRef.current);
+    };
   }, []);
 
-  // ✅ Only trigger alert when emergency becomes true
   useEffect(() => {
     if (emergency) {
-      alert("🚨 Help is on the way! Your location has been shared with the nearest police station.");
-      // optional: reset flag so it doesn't keep firing
+      alert(
+        "🚨 Help is on the way! Your location has been shared with the nearest police station."
+      );
       setEmergency(false);
+      resetAlert(); // reset so next "guardian help help" works
     }
   }, [emergency]);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center">
-      <div className="border border-black rounded-md p-4">
+    <div className="h-screen w-full flex flex-col items-center justify-center bg-gray-100">
+      <div className="border border-gray-400 rounded-lg p-6 w-full max-w-md shadow-lg bg-white">
+        <h2 className="text-xl font-semibold mb-4 text-center">
+          Voice Command Transcript
+        </h2>
         <textarea
-          name="askAI"
           id="askAI"
-          cols={30}
-          rows={10}
+          className="w-full h-40 border border-gray-300 p-3 rounded-md resize-none bg-gray-50 text-sm"
           value={text}
           readOnly
+          aria-label="Live voice transcript"
         />
       </div>
     </div>
