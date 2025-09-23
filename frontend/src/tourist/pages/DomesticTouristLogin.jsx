@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Reusable SVG Icons for input fields
 const EmailIcon = () => (
@@ -28,11 +29,13 @@ const AadharIcon = () => (
 
 // The Login Form component for Domestic Tourists
 export default function DomesticLoginForm() {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
         aadharNumber: '',
-        phoneNumber: ''
+        phoneNumber: '' // This field is optional for login
     });
 
     const handleChange = (e) => {
@@ -40,16 +43,47 @@ export default function DomesticLoginForm() {
         setFormData(prevData => ({ ...prevData, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Basic validation to check if fields are filled
+        
+        // Basic validation to check if required fields are filled
         if (!formData.email || !formData.password || !formData.aadharNumber) {
             alert('Please fill in all required fields: Email, Password, and Aadhar Number.');
             return;
         }
-        console.log("Login Attempt:", formData);
-        alert("Login successful! Check the console for the data.");
-        // In a real app, you would send this data to your server for authentication
+        
+        setLoading(true);
+        try {
+            const res = await fetch("http://localhost:4000/api/tourist/domestictouristlogin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+                credentials: "include", // Necessary for handling cookies
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Display the specific error message from the backend
+                alert(data.error || "Login failed. Please check your credentials.");
+                return;
+            }
+
+            alert("✅ Login successful!");
+            console.log("Login response:", data);
+            // Save token after login
+localStorage.setItem("token", data.token);
+
+
+            // Redirect to the domestic tourist dashboard after a successful login
+            navigate("/home/trackyourlocation");
+
+        } catch (err) {
+            console.error("❌ Login error:", err);
+            alert("An error occurred during login. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -128,12 +162,12 @@ export default function DomesticLoginForm() {
                         {/* Submit Button */}
                         <button
                             type="submit"
-                            className="w-full py-3 px-4 rounded-lg text-lg font-bold text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 transition-colors"
+                            disabled={loading}
+                            className="w-full py-3 px-4 rounded-lg text-lg font-bold text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 transition-colors disabled:bg-slate-400"
                         >
-                            Login
+                            {loading ? 'Logging in...' : 'Login'}
                         </button>
                     </form>
-                    
                 </div>
             </div>
         </div>

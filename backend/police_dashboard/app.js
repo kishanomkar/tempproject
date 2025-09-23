@@ -6,7 +6,7 @@ import policeRouter from './routes/police.routes.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 // import { qrDataStore } from './controller/tourist.controller.js';
-// import { getAllTourists } from './services/data.services.js';
+import { getAllTourists } from './services/data.services.js';
 
 connect();
 
@@ -30,6 +30,7 @@ app.use('/police', policeRouter);
 //     domesticQRData: qrDataStore.domesticQRData,
 //   });
 // });
+
 
 
 app.get('/', (req, res) => {

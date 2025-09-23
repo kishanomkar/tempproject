@@ -1,232 +1,258 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from 'react-router-dom';
-// import FullscreenProtector from '../components/FullscreenProtector';
-import ScreenshotProtector from '../components/ScreenshotProtector';
+
+// It's good practice to place styles in a separate CSS file,
+// but for this self-contained example, we'll inject them here.
+const MarkerStyles = () => (
+  <style>{`
+    .marker {
+      background-size: cover;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--marker-color, #3b82f6), 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .marker::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        animation: pulse 1.75s infinite cubic-bezier(0.66, 0, 0, 1);
+        /* The glow size is now controlled by a CSS variable */
+        box-shadow: 0 0 0 var(--pulse-max-size, 12px) var(--marker-color, #3b82f6);
+    }
+
+    .marker-domestic {
+      --marker-color: #3b82f6; /* Blue-500 */
+      background-color: #3b82f6;
+    }
+
+    .marker-foreign {
+      --marker-color: #f97316; /* Orange-500 */
+      background-color: #f97316;
+    }
+
+    @keyframes pulse {
+      to {
+        /* We animate the box-shadow to a transparent state */
+        box-shadow: 0 0 0 var(--pulse-max-size, 0px) rgba(255, 255, 255, 0);
+      }
+    }
+  `}</style>
+);
 
 
+// Set your Mapbox access token here
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN; // ⚠️ IMPORTANT: Replace with your actual token
 
 
-// Function to fetch tourists from the backend
+/**
+ * Fetches all tourist data from the secure police backend endpoint.
+ */
 const getTourists = async () => {
   try {
-    const response = await fetch('http://localhost:3000/total-tourist', {
+    const response = await fetch('http://localhost:3000/police/total-tourist', {
       method: 'GET',
       credentials: 'include',
     });
     const data = await response.json();
     if (response.ok) {
-      return data; // { foreignTourists, domesticTourists }
+      const foreign = data.foreignTourists.map(t => ({ ...t, type: 'Foreign' }));
+      const domestic = data.domesticTourists.map(t => ({ ...t, type: 'Domestic' }));
+      return [...foreign, ...domestic];
     } else {
-      throw new Error(data.message || 'Failed to fetch tourists');
+      throw new Error(data.message || 'Failed to fetch tourist data');
     }
   } catch (error) {
-    console.error('Error fetching tourists:', error);
-    throw error;
+    console.error('Error fetching tourist data:', error);
+    return []; // Return an empty array on error
   }
 };
 
-// Function to update tourist's location
-const updateMyLocation = async (id, lat, lng) => {
-  try {
-    const response = await fetch(`http://localhost:3000/tourist/update-location/${id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify({ lat, lng })
-    });
 
-    const data = await response.json();
-    if (response.ok) {
-      console.log(`Location updated for ${id}:`, data.location);
-    } else {
-      throw new Error(data.message || 'Failed to update location');
-    }
-  } catch (error) {
-    console.error(`Error updating location for ${id}:`, error);
-  }
-};
+export default function Nazar() {
+    const mapContainer = useRef(null);
+    const map = useRef(null);
+    const [tourists, setTourists] = useState([]);
+    const [hoveredTourist, setHoveredTourist] = useState(null);
+    const navigate = useNavigate();
+    // This ref will now store both the marker instance and its HTML element
+    const markersRef = useRef([]);
 
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
-
-export default function TouristDashboard() {
-  const [hoveredTourist, setHoveredTourist] = useState(null);
-  const [currentLocation, setCurrentLocation] = useState({ latitude: null, longitude: null });
-  const [tourists, setTourists] = useState([]); // Combined tourists
-  const [markers, setMarkers] = useState([]); // For cleanup of markers
-  const mapContainer = useRef(null);
-  const mapRef = useRef(null);
-  const navigate = useNavigate();
-  const defaultPosition = [77.2090, 28.6139]; // fallback [lng, lat]
-
-  // Get current location using Geolocation API
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setCurrentLocation({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-          });
-        },
-        (err) => {
-          console.error("Error fetching location:", err);
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  };
-
-
-  // Fetch tourists from backend and combine them into one list
-  const fetchTourists = async () => {
-    try {
-      const data = await getTourists();
-      const combinedTourists = [
-        ...data.foreignTourists.map(t => ({ ...t, type: 'Foreign' })),
-        ...data.domesticTourists.map(t => ({ ...t, type: 'Domestic' }))
-      ];
-      setTourists(combinedTourists);
-    } catch (error) {
-      console.error('Failed to load tourists:', error);
-    }
-  };
-
-  // Fetch location and tourists on component mount
-  useEffect(() => {
-    getLocation();
-    fetchTourists();
-  }, []);
-
-  // Periodically update location for all tourists every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentLocation.latitude && currentLocation.longitude && tourists.length > 0) {
-        tourists.forEach(tourist => {
-          if (tourist._id) {
-            updateMyLocation(tourist._id, currentLocation.latitude, currentLocation.longitude);
-          }
+    // NEW: Function to dynamically update glow size based on zoom
+    const updateGlowSize = useCallback(() => {
+        if (!map.current) return;
+        const zoom = map.current.getZoom();
+        // Simple formula to decrease size on zoom out.
+        // You can tweak these numbers to change the scaling behavior.
+        const maxSize = Math.max(4, 28 - zoom * 1.5);
+        
+        markersRef.current.forEach(markerItem => {
+            if (markerItem.element) {
+                markerItem.element.style.setProperty('--pulse-max-size', `${maxSize}px`);
+            }
         });
-      }
-    }, 5000); // every 5 seconds
+    }, []);
 
-    return () => clearInterval(interval);
-  }, [currentLocation, tourists]);
 
-  // Initialize map only once
-  useEffect(() => {
-    if (!mapRef.current) {
-      mapRef.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: defaultPosition,
-        zoom: 12,
-      });
-    }
-  }, []);
+    // Function to update markers on the map
+    const updateMarkers = useCallback((touristsData) => {
+        if (!map.current) return;
+        
+        // Remove old markers
+        markersRef.current.forEach(markerItem => markerItem.marker.remove());
+        markersRef.current = [];
 
-  // Update map view and markers when tourists or location change
-  useEffect(() => {
-    if (mapRef.current && currentLocation.latitude && currentLocation.longitude) {
-      mapRef.current.flyTo({
-        center: [currentLocation.longitude, currentLocation.latitude],
-        zoom: 14,
-        speed: 1.2,
-        curve: 1,
-      });
-    }
+        // Add new markers
+        touristsData.forEach(tourist => {
+            if (tourist.location?.lat && tourist.location?.lng) {
+                const el = document.createElement('div');
+                el.className = `marker ${tourist.type === 'Foreign' ? 'marker-foreign' : 'marker-domestic'}`;
 
-    // Remove old markers
-    markers.forEach(marker => marker.remove());
-    const newMarkers = [];
+                const marker = new mapboxgl.Marker(el)
+                    .setLngLat([tourist.location.lng, tourist.location.lat])
+                    .addTo(map.current);
 
-    // Add markers for all tourists with valid location
-    tourists.forEach((tourist) => {
-      if (tourist.location && tourist.location.lat != null && tourist.location.lng != null) {
-        const el = document.createElement('div');
-        el.className = 'w-4 h-4 bg-red-500 rounded-full cursor-pointer hover:ring-2 hover:ring-red-400';
-        el.style.boxShadow = '0 0 4px #333';
-        el.addEventListener('mouseenter', () => setHoveredTourist(tourist));
-        el.addEventListener('mouseleave', () => setHoveredTourist(null));
-        el.addEventListener('click', () => navigate(`/tourist/${tourist._id}`));
+                el.addEventListener('mouseenter', () => setHoveredTourist(tourist));
+                el.addEventListener('mouseleave', () => setHoveredTourist(null));
+                el.addEventListener('click', () => {
+                    navigate(`/tourist/${tourist._id}`, { state: { tourist } });
+                });
+                
+                // Store both marker and element for later access
+                markersRef.current.push({ marker, element: el });
+            }
+        });
+        
+        // Set the initial glow size after markers are added
+        updateGlowSize();
+    }, [navigate, updateGlowSize]);
 
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([tourist.location.lng, tourist.location.lat])
-          .addTo(mapRef.current);
+    // Effect to initialize the map
+    useEffect(() => {
+        if (map.current) return; // initialize map only once
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [75.7873, 26.9124], // Jaipur
+            zoom: 11
+        });
 
-        newMarkers.push(marker);
-      }
-    });
+        // NEW: Add user location control to the map
+        map.current.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: { enableHighAccuracy: true },
+                trackUserLocation: true,
+                showUserHeading: true
+            })
+        );
+        
+        // NEW: Add the zoom event listener for dynamic glow
+        map.current.on('zoom', updateGlowSize);
 
-    setMarkers(newMarkers);
+        // Cleanup
+        return () => {
+             map.current.off('zoom', updateGlowSize);
+        }
 
-    // Cleanup on unmount or before re-rendering
-    return () => {
-      newMarkers.forEach(marker => marker.remove());
-    };
-  }, [tourists, currentLocation, navigate]);
+    }, [updateGlowSize]);
 
-  return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-     {/* <FullscreenProtector redirectTo="/home" /> */}
-     <ScreenshotProtector />
-      {/* Map Area */}
-      <div className="lg:w-2/3 bg-gray-100 p-6 border-r border-gray-300">
-        <h3 className="text-xl font-semibold mb-4 text-gray-700">Map of area under police station</h3>
-        <div
-          ref={mapContainer}
-          className="relative h-[590px] bg-white border border-gray-300 rounded-md overflow-hidden"
-        />
-      </div>
+    // Effect to fetch tourist data periodically
+    useEffect(() => {
+        const fetchData = async () => {
+            const touristsData = await getTourists();
+            setTourists(touristsData);
+            updateMarkers(touristsData);
+        };
 
-      {/* Right Panel - Profile */}
-      <div className="lg:w-1/3 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 space-y-6">
-  <div className="bg-gradient-to-r from-blue-50 to-white p-6 rounded-lg shadow-inner border border-gray-100">
-    <h3 className="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Tourist Profile</h3>
+        fetchData();
+        const interval = setInterval(fetchData, 5000);
+        return () => clearInterval(interval);
+    }, [updateMarkers]);
 
-    {hoveredTourist ? (
-      <div className="text-gray-700 space-y-3">
-        <p><span className="font-semibold">Name:</span> {hoveredTourist.fullname || "John Doe"}</p>
-        <p><span className="font-semibold">Type:</span> {hoveredTourist.type || "Domestic"}</p>
-        <p><span className="font-semibold">Gender:</span> {hoveredTourist.gender || "Not specified"}</p>
-        <p><span className="font-semibold">Date of Birth:</span> {hoveredTourist.date_of_birth ? new Date(hoveredTourist.date_of_birth).toLocaleDateString() : "01/01/1990"}</p>
-        <p><span className="font-semibold">Nationality:</span> {hoveredTourist.nationality || "Unknown"}</p>
 
-        {hoveredTourist.type === 'Foreign' ? (
-          <>
-            <p><span className="font-semibold">Passport No:</span> {hoveredTourist.identityDocument?.passportNumber || "P12345678"}</p>
-            <p><span className="font-semibold">Visa No:</span> {hoveredTourist.identityDocument?.visaNumber || "V98765432"}</p>
-          </>
-        ) : (
-          <>
-            <p><span className="font-semibold">Aadhar No:</span> {hoveredTourist.identityDocument?.aadharNumber || "1234-5678-9012"}</p>
-            <p><span className="font-semibold">Driving License:</span> {hoveredTourist.identityDocument?.drivingLicenseNumber || "DL1234567890"}</p>
-          </>
-        )}
+    return (
+        <>
+            <MarkerStyles />
+            <div className="flex h-screen bg-gray-100 font-sans">
+                {/* Main Map Area */}
+                <div ref={mapContainer} className="flex-grow h-full" />
 
-        <p><span className="font-semibold">Email:</span> {hoveredTourist.contactInformation?.email || "example@email.com"}</p>
-        <p><span className="font-semibold">Phone:</span> {hoveredTourist.contactInformation?.phoneNumber || "+911234567890"}</p>
+                {/* Sidebar */}
+                <aside className="w-96 bg-white shadow-2xl flex flex-col">
+                    <div className="p-6 border-b border-gray-200">
+                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">NAZAR</h1>
+                        <p className="text-gray-500">Live Tourist Monitoring Dashboard</p>
+                    </div>
 
-        <p><span className="font-semibold">Arrival Date:</span> {hoveredTourist.travelDetails?.arrivalDate ? new Date(hoveredTourist.travelDetails.arrivalDate).toLocaleDateString() : "01/01/2025"}</p>
-        <p><span className="font-semibold">Departure Date:</span> {hoveredTourist.travelDetails?.departureDate ? new Date(hoveredTourist.travelDetails.departureDate).toLocaleDateString() : "07/01/2025"}</p>
-        <p><span className="font-semibold">Destination:</span> {hoveredTourist.travelDetails?.destination || "Unknown City"}</p>
-        <p><span className="font-semibold">Flight No:</span> {hoveredTourist.travelDetails?.flightNumber || "FL123"}</p>
-        {hoveredTourist.type === 'Foreign' && (
-          <p><span className="font-semibold">Origin Country:</span> {hoveredTourist.travelDetails?.originCountry || "USA"}</p>
-        )}
+                    <div className="p-6 space-y-6">
+                        {/* Stats Card */}
+                        <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                            <p className="text-sm font-medium text-gray-500">Total Monitored Tourists</p>
+                            <p className="text-4xl font-bold text-gray-800">{tourists.length}</p>
+                        </div>
 
-        <p><span className="font-semibold">Smart ID:</span> {hoveredTourist.smartTouristId || "STID1001"}</p>
-        <p><span className="font-semibold">Location:</span> Lat {hoveredTourist.location?.lat?.toFixed(5) || "0.00000"}, Lng {hoveredTourist.location?.lng?.toFixed(5) || "0.00000"}</p>
-      </div>
-    ) : (
-      <p className="text-gray-400 italic">Hover over a tourist dot to see details</p>
-    )}
-  </div>
-</div>
+                        {/* Legend */}
+                        <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-2">
+                                <span className="w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white shadow"></span>
+                                <p className="text-sm text-gray-600">Domestic</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-3.5 h-3.5 rounded-full bg-orange-500 border-2 border-white shadow"></span>
+                                <p className="text-sm text-gray-600">Foreign</p>
+                            </div>
+                        </div>
+                    </div>
 
-    </div>
-  );
+                    <hr className="border-gray-200" />
+
+                    {/* Tourist Information Panel */}
+                    <div className="flex-grow p-6 overflow-y-auto">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Tourist Information</h2>
+                        {hoveredTourist ? (
+                            <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <h3 className="font-bold text-xl text-gray-900">{hoveredTourist.fullname}</h3>
+                                
+                                <InfoRow label="Type" value={hoveredTourist.type} />
+                                {hoveredTourist.type === 'Foreign' ? (
+                                    <>
+                                        <InfoRow label="Passport" value={hoveredTourist.passportNumber} />
+                                        <InfoRow label="Visa" value={hoveredTourist.visaNumber} />
+                                    </>
+                                ) : (
+                                    <InfoRow label="Aadhar" value={hoveredTourist.aadharNumber} />
+                                )}
+                                <InfoRow label="Email" value={hoveredTourist.email} />
+                                <InfoRow label="Phone" value={hoveredTourist.phoneNumber} />
+                                <InfoRow label="Last Update" value={new Date(hoveredTourist.updatedAt).toLocaleString()} />
+                            </div>
+                        ) : (
+                            <div className="text-center py-10 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                                <p className="text-gray-500">Hover over a tourist on the map to see their details.</p>
+                            </div>
+                        )}
+                    </div>
+                </aside>
+            </div>
+        </>
+    );
 }
+
+// A small helper component to keep the info display clean and consistent
+const InfoRow = ({ label, value }) => (
+    <div>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{label}</p>
+        <p className="text-sm text-gray-800">{value}</p>
+    </div>
+);

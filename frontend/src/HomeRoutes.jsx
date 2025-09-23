@@ -12,7 +12,7 @@ export default function HomeRoutes() {
   return (
     <Routes>
       <Route path='/home' element={<MainLayout />}>
-        <Route index element={<TrackingMap />} /> {/* Set a default route */}
+        <Route path='/home/trackyourlocation' element={<TrackingMap />} /> {/* Set a default route */}
         <Route path='safety' element={<Safety />} />
         <Route path='emergency' element={<Emergency />} />
         <Route path='tracking' element={<TrackingMap />} />

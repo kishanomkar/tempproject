@@ -1,19 +1,47 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
+// ✅ Import the user models
+import { foreignUser, domesticUser } from "../models/user.model.js";
 
-const touristMiddleware = (req, res, next) => {
+const touristMiddleware = async (req, res, next) => {
   try {
-    // Get token from cookie or A header
     const token =
       req.cookies?.token ||
-      (req.headers.authorization && req.headers.authorization.split(' ')[1]);
+      (req.headers.authorization &&
+        req.headers.authorization.split(" ")[1]);
+
     if (!token) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).json({ message: "Unauthorized: No token provided" });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.foreignTourist = decoded;
+
+    if (!decoded || !decoded.id || !decoded.type) {
+        return res.status(401).json({ message: "Unauthorized: Invalid token payload" });
+    }
+
+    // ✅ Find the user in the database based on the token type
+    let user;
+    if (decoded.type === 'Foreign') {
+        user = await foreignUser.findById(decoded.id).select("-password");
+    } else if (decoded.type === 'Domestic') {
+        user = await domesticUser.findById(decoded.id).select("-password");
+    }
+
+    if (!user) {
+        return res.status(404).json({ message: "Unauthorized: Tourist not found in database" });
+    }
+    
+    // ✅ Attach the correct user object to the request
+    if (decoded.type === 'Foreign') {
+        req.foreignTourist = user;
+    } else {
+        req.domesticTourist = user;
+    }
+
     next();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Middleware error:", error.message);
+    res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
   }
 };
 

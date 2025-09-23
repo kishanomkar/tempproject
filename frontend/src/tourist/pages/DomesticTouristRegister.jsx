@@ -44,10 +44,10 @@ const useLocation = () => {
         // If permission is already granted, start watching immediately.
         if (permissionState === 'granted' && watchId.current === null) {
              watchId.current = navigator.geolocation.watchPosition(handleSuccess, handleError, {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0,
-            });
+                 enableHighAccuracy: true,
+                 timeout: 5000,
+                 maximumAge: 0,
+             });
         }
     }, [permissionState]);
 
@@ -83,16 +83,8 @@ const useLocation = () => {
 
 // Main Application Component
 export default function DomesticTouristRegister() {
+    const navigate = useNavigate();
 
-    
-
-
-const navigate = useNavigate();
-
-
-const handleRegister = () => {
-    navigate('/loginDomesticTourist')
-}
     // We get the location data and methods from our custom hook.
     const { latitude, longitude, error: locationError, permissionState, requestLocation } = useLocation();
 
@@ -131,16 +123,39 @@ const handleRegister = () => {
         setFormData(prevData => ({ ...prevData, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Basic password match validation
         if (formData.password !== formData.confirmPassword) {
             alert("Passwords do not match!");
             return;
         }
-        // In a real app, you would send this data to your server
-        console.log("Form Submitted:", formData);
-        alert("Registration successful! Check the console for form data.");
+        
+        try {
+            const res = await fetch("http://localhost:4000/api/tourist/registerdomestictourist", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+                credentials: "include",
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // If the backend sends validation errors, display them
+                const errorMsg = data.errors ? data.errors.map(err => err.msg).join(', ') : (data.error || "Registration failed.");
+                alert(`Error: ${errorMsg}`);
+                return;
+            }
+
+            alert("✅ Registration successful!");
+            console.log("Server response:", data);
+            navigate('/loginDomesticTourist'); // Navigate after success
+
+        } catch (err) {
+            console.error("❌ Registration failed:", err);
+            alert("Something went wrong during registration.");
+        }
     };
 
     // SVG Icon for location button
@@ -195,7 +210,7 @@ const handleRegister = () => {
                                 <input type="text" name="aadharNumber" placeholder="Aadhar Number" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.aadharNumber} onChange={handleChange} />
                                 <input type="text" name="drivingLicenseNumber" placeholder="Driving License (Optional)" className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.drivingLicenseNumber} onChange={handleChange} />
                                 <input type="email" name="email" placeholder="Email Address" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.email} onChange={handleChange} />
-                                <input type="tel" name="phoneNumber" placeholder="Phone Number (Optional)" className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.phoneNumber} onChange={handleChange} />
+                                <input type="tel" name="phoneNumber" placeholder="Phone Number" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.phoneNumber} onChange={handleChange} />
                             </div>
                         </div>
 
@@ -226,42 +241,41 @@ const handleRegister = () => {
                         <div>
                              <h2 className="text-xl font-semibold text-slate-700 border-b pb-3 mb-6">Account & Location</h2>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input type="password" name="password" placeholder="Password" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.password} onChange={handleChange}/>
-                                <input type="password" name="confirmPassword" placeholder="Confirm Password" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.confirmPassword} onChange={handleChange}/>
-                                <div className="md:col-span-2">
-                                    <label htmlFor="smartTouristId" className="block text-sm font-medium text-slate-600 mb-1">Smart Tourist ID</label>
-                                    <input type="text" id="smartTouristId" name="smartTouristId" readOnly className="w-full px-4 py-2 border border-slate-300 rounded-md bg-slate-100 text-slate-500" value={formData.smartTouristId} />
-                                </div>
-                                <div className="md:col-span-2 p-4 border border-slate-200 rounded-lg">
-                                    <h3 className="font-medium text-slate-700 mb-2">Location Information</h3>
-                                    {permissionState === 'prompt' && (
-                                        <button type="button" onClick={requestLocation} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                            <LocationMarkerIcon />
-                                            Share Current Location
-                                        </button>
-                                    )}
-                                    {permissionState === 'denied' && (
-                                         <p className="text-sm text-red-600">Location access was denied. Please enable it in your browser settings to continue.</p>
-                                    )}
-                                    {locationError && permissionState !== 'denied' && <p className="text-sm text-red-600">Error: {locationError}</p>}
-                                    {latitude && longitude ? (
-                                        <div className="mt-4 text-sm space-y-2 bg-slate-50 p-3 rounded-md">
-                                           <p className="text-green-600 font-semibold">Location shared successfully. We will keep this updated.</p>
-                                           <p><strong className="font-medium text-slate-600">Latitude:</strong> {latitude.toFixed(6)}</p>
-                                           <p><strong className="font-medium text-slate-600">Longitude:</strong> {longitude.toFixed(6)}</p>
-                                        </div>
-                                    ) : (
-                                        permissionState === 'granted' && <p className="text-sm text-slate-500 mt-2">Acquiring location...</p>
-                                    )}
-                                </div>
-                             </div>
+                                 <input type="password" name="password" placeholder="Password" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.password} onChange={handleChange}/>
+                                 <input type="password" name="confirmPassword" placeholder="Confirm Password" required className="w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" value={formData.confirmPassword} onChange={handleChange}/>
+                                 <div className="md:col-span-2">
+                                     <label htmlFor="smartTouristId" className="block text-sm font-medium text-slate-600 mb-1">Smart Tourist ID</label>
+                                     <input type="text" id="smartTouristId" name="smartTouristId" readOnly className="w-full px-4 py-2 border border-slate-300 rounded-md bg-slate-100 text-slate-500" value={formData.smartTouristId} />
+                                 </div>
+                                 <div className="md:col-span-2 p-4 border border-slate-200 rounded-lg">
+                                     <h3 className="font-medium text-slate-700 mb-2">Location Information</h3>
+                                     {permissionState === 'prompt' && (
+                                         <button type="button" onClick={requestLocation} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                             <LocationMarkerIcon />
+                                             Share Current Location
+                                         </button>
+                                     )}
+                                     {permissionState === 'denied' && (
+                                          <p className="text-sm text-red-600">Location access was denied. Please enable it in your browser settings to continue.</p>
+                                     )}
+                                     {locationError && permissionState !== 'denied' && <p className="text-sm text-red-600">Error: {locationError}</p>}
+                                     {latitude && longitude ? (
+                                         <div className="mt-4 text-sm space-y-2 bg-slate-50 p-3 rounded-md">
+                                            <p className="text-green-600 font-semibold">Location shared successfully. We will keep this updated.</p>
+                                            <p><strong className="font-medium text-slate-600">Latitude:</strong> {latitude.toFixed(6)}</p>
+                                            <p><strong className="font-medium text-slate-600">Longitude:</strong> {longitude.toFixed(6)}</p>
+                                         </div>
+                                     ) : (
+                                         permissionState === 'granted' && <p className="text-sm text-slate-500 mt-2">Acquiring location...</p>
+                                     )}
+                                 </div>
+                               </div>
                         </div>
 
                         {/* Submit Button */}
                         <div className="pt-6 border-t border-slate-200">
-                           <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-                           onClick={handleRegister}>
-                                Register
+                           <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700">
+                                 Register
                             </button>
                         </div>
                     </form>

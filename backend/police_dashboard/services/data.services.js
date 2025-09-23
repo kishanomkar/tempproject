@@ -1,9 +1,9 @@
-import { foreignUser, domesticUser } from "../models/tourist.model.js";
+import { foreignUser, domesticUser } from "../../tourist_dashboard/models/user.model.js";
 
 export const getAllTourists = async () => {
     try {
-        const foreignTourists = await foreignUser.find(); // fetch all foreign tourists
-        const domesticTourists = await domesticUser.find(); // fetch all domestic tourists
+        const foreignTourists = await foreignUser.find().select('-password');
+        const domesticTourists = await domesticUser.find().select('-password');
         return { foreignTourists, domesticTourists };
     } catch (error) {
         console.error("Error fetching tourists:", error);

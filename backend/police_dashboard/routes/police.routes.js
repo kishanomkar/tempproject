@@ -25,12 +25,16 @@ router.get('/policelogout',
 )
 
 
-
 router.get('/policeprofile',
     authMiddleware,
     policeController.policeProfileController
 )
 
+router.get(
+    '/total-tourist', 
+    authMiddleware, 
+    policeController.getAllTouristsController
+);
 // router.post('/create-foreign-tourist',[
 //     body('contactInformation.email').isEmail().withMessage('Invalid email format'),
 //     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),

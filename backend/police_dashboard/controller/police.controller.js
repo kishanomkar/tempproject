@@ -1,6 +1,7 @@
 import {validationResult} from 'express-validator';
 import Police from '../models/police.model.js';
 import * as policeService from "../services/police.services.js"
+import { getAllTourists } from '../services/data.services.js';
 import mongoose from 'mongoose';
 export const registerPoliceController = async (req, res) => {
     const errors = validationResult(req);
@@ -48,7 +49,7 @@ export const loginPoliceController = async (req, res) => {
     const token = police.generateAuthToken();
     res.cookie("token", token, { httpOnly: true, sameSite: "strict" }); // ✅ save token in cookie
     res.status(200).json({ police, token });
-
+    localStorage.setItem("police token",token)
     delete police._doc.password
   } catch (error) {
     return res.status(400).send(error.message);
@@ -84,4 +85,49 @@ export const policeProfileController = async (req, res) => {
   const police = req.user;
   console.log(req.user);
   res.status(200).json({ police });
+};
+
+
+export const getAllTouristsController = async (req, res) => {
+    try {
+        // 1. Fetch the raw tourist data from the database via the service.
+        const { foreignTourists, domesticTourists } = await getAllTourists();
+
+        // 2. Map over the foreign tourists to format their data.
+        const flatForeignTourists = foreignTourists.map(tourist => {
+            const doc = tourist._doc;
+            return {
+                ...doc,
+                type: 'Foreign', // Add a 'type' for easy identification on the frontend.
+                // Convert GeoJSON coordinates to a simple lat/lng object for the map.
+                location: {
+                    lat: doc.location?.coordinates[1],
+                    lng: doc.location?.coordinates[0]
+                }
+            };
+        });
+
+        // 3. Map over the domestic tourists similarly.
+        const flatDomesticTourists = domesticTourists.map(tourist => {
+            const doc = tourist._doc;
+            return {
+                ...doc,
+                type: 'Domestic',
+                location: {
+                    lat: doc.location?.coordinates[1],
+                    lng: doc.location?.coordinates[0]
+                }
+            };
+        });
+        
+        // 4. Send the prepared data back to the dashboard.
+        res.status(200).json({
+            foreignTourists: flatForeignTourists,
+            domesticTourists: flatDomesticTourists,
+        });
+
+    } catch (error) {
+        console.error("Error in getAllTouristsController:", error);
+        res.status(500).json({ message: "Server error while fetching tourist data" });
+    }
 };

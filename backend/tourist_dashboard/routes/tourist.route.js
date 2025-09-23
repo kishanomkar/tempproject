@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import { body } from 'express-validator';
 import * as touristController from '../controller/tourist.controller.js'
-
+import { domesticUser, foreignUser } from '../models/user.model.js';
 import touristMiddleware from '../middlewares/tourist.middleware.js';
 
 
@@ -35,5 +35,8 @@ router.get('/domestictouristlogout',touristMiddleware, touristController.logoutD
 
 router.get('/foreigntouristprofile',touristMiddleware, touristController.getForeignTouristProfileController)
 router.get('/domestictouristprofile',touristMiddleware, touristController.getDomesticTouristProfileController)
+
+
+router.post('/update-location', touristMiddleware, touristController.updateLocationController);
 
 export default router;
