@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 dotenv.config();
 
 // ---------------- FOREIGN TOURIST SCHEMA ----------------
@@ -13,26 +12,19 @@ const foreignTouristsSchema = new mongoose.Schema(
     date_of_birth: { type: Date, required: true },
     nationality: { type: String, required: true },
 
-    identityDocument: {
-      passportNumber: { type: String, required: true, unique: true },
-      visaNumber: { type: String, required: true, unique: true },
-    },
+      passportNumber: { type: String, required: true },
+      visaNumber: { type: String, required: true },
 
-    contactInformation: {
-      email: { type: String, required: true, unique: true },
+      email: { type: String, required: true },
       phoneNumber: { type: String },
-    },
-
-    travelDetails: {
+  
       arrivalDate: { type: Date, required: true },
       departureDate: { type: Date, required: true },
       flightNumber: { type: String, required: true },
-      originCountry: { type: String, required: true },
       destination: { type: String, required: true },
-    },
 
     password: { type: String, required: true },
-    smartTouristId: { type: String, required: true, unique: true },
+    smartTouristId: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -45,25 +37,25 @@ const domesticTouristsSchema = new mongoose.Schema(
     date_of_birth: { type: Date, required: true },
     nationality: { type: String, required: true },
 
-    identityDocument: {
-      aadharNumber: { type: String, required: true, unique: true },
-      drivingLicenseNumber: { type: String, unique: true },
-    },
+   
+      aadharNumber: { type: String, required: true },
+      drivingLicenseNumber: { type: String },
+    
 
-    contactInformation: {
-      email: { type: String, required: true, unique: true },
+ 
+      email: { type: String, required: true },
       phoneNumber: { type: String },
-    },
+ 
 
-    travelDetails: {
+
       arrivalDate: { type: Date, required: true },
       departureDate: { type: Date },
       flightNumber: { type: String },
       destination: { type: String, required: true },
-    },
+  
 
     password: { type: String, required: true },
-    smartTouristId: { type: String, required: true, unique: true },
+    smartTouristId: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -82,7 +74,7 @@ foreignTouristsSchema.methods.generateAuthToken = function () {
   return jwt.sign(
     {
       id: this._id,
-      email: this.contactInformation.email,
+      email: this.email,
       smartTouristId: this.smartTouristId,
     },
     process.env.JWT_SECRET,
@@ -103,7 +95,7 @@ domesticTouristsSchema.methods.generateAuthToken = function () {
   return jwt.sign(
     {
       id: this._id,
-      email: this.contactInformation.email,
+      email: this.email,
       smartTouristId: this.smartTouristId,
     },
     process.env.JWT_SECRET,
