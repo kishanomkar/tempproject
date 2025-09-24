@@ -39,4 +39,8 @@ router.get('/domestictouristprofile',touristMiddleware, touristController.getDom
 
 router.post('/update-location', touristMiddleware, touristController.updateLocationController);
 
+router.post('/find-member', touristMiddleware, touristController.findMemberController);
+
+router.get('/profile', touristMiddleware, touristController.getProfile);
+
 export default router;

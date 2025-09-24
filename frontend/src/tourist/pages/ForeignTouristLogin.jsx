@@ -82,6 +82,8 @@ export default function ForeignLoginForm() {
           console.log("Login response:", data);
 
           if (data.token) localStorage.setItem("token", data.token);
+          localStorage.setItem("ForeignTouristId", data.foreignTourist._id);
+          localStorage.setItem("touristEmail", data.foreignTourist.email);
 
           window.location.href = "/home/trackyourlocation";
         } catch (err) {

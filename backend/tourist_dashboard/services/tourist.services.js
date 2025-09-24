@@ -99,3 +99,29 @@ export const updateTouristLocation = async (userId, { lat, lng }) => {
   // 5. Return the updated tourist document, or 'null' if not found in either collection.
   return updatedTourist;
 };
+
+
+export const findMemberByCredentials = async ({ smartTouristId, email }) => {
+  if (!smartTouristId || !email) {
+    throw new Error("Smart Tourist ID and email are required.");
+  }
+
+  // Define the fields to return (projection)
+  const projection = {
+    fullname: 1,
+    location: 1,
+    smartTouristId: 1,
+    _id: 0 // Exclude the internal ID
+  };
+
+  // Try to find the member in the domestic collection first
+  let member = await domesticUser.findOne({ smartTouristId, email }, projection);
+
+  // If not found, try the foreign collection
+  if (!member) {
+    member = await foreignUser.findOne({ smartTouristId, email }, projection);
+  }
+
+  // Return the found member, or null if they don't exist
+  return member;
+};

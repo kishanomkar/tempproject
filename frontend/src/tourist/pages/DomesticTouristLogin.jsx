@@ -73,6 +73,9 @@ export default function DomesticLoginForm() {
             console.log("Login response:", data);
             // Save token after login
 localStorage.setItem("token", data.token);
+localStorage.setItem("DomesticTouristId", data.domesticTourist._id);
+localStorage.setItem("touristEmail", data.domesticTourist.email);
+
 
 
             // Redirect to the domestic tourist dashboard after a successful login

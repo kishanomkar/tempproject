@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 // --- Reusable SVG Icons ---
 const EmailIcon = () => (
     <svg className="w-5 h-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -53,10 +54,11 @@ export default function PoliceLogin() {
             if (!res.ok) {
                 throw new Error(data.message || 'Login failed. Please check your credentials.');
             }
-    localStorage.setItem("police token",token)
 
+            // On successful login, save the token to localStorage
+            localStorage.setItem('police token', data.token);
 
-            // On successful login, navigate to the Nazar dashboard
+            // Then, navigate to the Nazar dashboard
             navigate('/nazar');
 
         } catch (err) {
@@ -137,3 +139,4 @@ export default function PoliceLogin() {
         </div>
     );
 }
+

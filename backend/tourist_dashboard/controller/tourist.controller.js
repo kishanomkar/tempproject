@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator";
 import { foreignUser,domesticUser } from "../models/user.model.js";
 import * as touristService from "../services/tourist.services.js"
+import jwt from "jsonwebtoken";
 
 export const registerForeignTouristController = async (req, res) => {
     const errors = validationResult(req);
@@ -200,5 +201,79 @@ export const updateLocationController = async (req, res) => {
     //    this catch block will handle it and send a generic 500 error.
     console.error("CRITICAL ERROR in updateLocationController:", error);
     res.status(500).json({ message: "Server error while updating location" });
+  }
+};
+
+
+export const findMemberController = async (req, res) => {
+  try {
+    const { smartTouristId, email } = req.body;
+
+    const member = await touristService.findMemberByCredentials({ smartTouristId, email });
+
+    if (!member) {
+      return res.status(404).json({ message: "No tourist found matching the provided details." });
+    }
+
+    if (!member.location || !member.location.coordinates || member.location.coordinates.length === 0) {
+      return res.status(404).json({ message: `${member.fullname} has not shared their location yet.` });
+    }
+
+    // ✅ THE FIX: Convert the Mongoose document to a plain JavaScript object.
+    // This ensures the data structure is clean and simple for the frontend.
+    const memberData = member.toObject();
+
+    res.status(200).json({
+      message: "Member found successfully",
+      member: {
+        fullname: memberData.fullname,
+        smartTouristId: memberData.smartTouristId,
+        location: {
+          type: 'Point',
+          // Ensure coordinates are sent in the correct [lng, lat] format
+          coordinates: memberData.location.coordinates 
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Error in findMemberController:", error);
+    res.status(500).json({ message: "An error occurred while searching for the member." });
+  }
+};
+
+
+export const getProfile = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies?.token;
+    if (!token) {
+      console.log("No token sent");
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("Decoded token:", decoded);
+    } catch (err) {
+      console.log("JWT verification failed:", err.message);
+      return res.status(401).json({ error: "Invalid token" });
+    }
+console.log(decoded.id);
+    let tourist;
+    if (decoded.type === "Domestic") {
+      tourist = await domesticUser.findById(decoded.id).select("-password");
+    } else if (decoded.type === "Foreign") {
+      tourist = await foreignUser.findById(decoded.id).select("-password");
+    }
+
+    console.log("Fetched tourist:", tourist);
+
+    if (!tourist) return res.status(404).json({ error: "Tourist not found" });
+
+    res.json({ tourist });
+  } catch (err) {
+    console.error("❌ Error in getProfile:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };
