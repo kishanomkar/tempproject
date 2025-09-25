@@ -52,7 +52,7 @@ const policeSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const alertSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   message: { type: String, required: true },
   location: {
     latitude: { type: Number },

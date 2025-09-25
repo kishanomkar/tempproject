@@ -137,9 +137,16 @@ export const createAlert = async (req, res) => {
   try {
     const { message, location, timestamp } = req.body;
 
-    // ✅ userId JWT ke payload se milega (purane middleware se)
+    console.log("📩 Alert received:", message, location, timestamp);
+
+    // ✅ Get userId from JWT payload
+    const userId = req.user?.id; // middleware should attach req.user
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized: No userId found" });
+    }
+
     const alert = new Alert({
-      userId: req.user.id,   // JWT banate waqt { id: user._id } bhejna zaruri hai
+      userId, // must exist in schema
       message,
       location,
       timestamp,
@@ -149,6 +156,7 @@ export const createAlert = async (req, res) => {
 
     res.json({ status: "ok", alert });
   } catch (err) {
+    console.error("❌ Error creating alert:", err);
     res.status(500).json({ error: err.message });
   }
 };

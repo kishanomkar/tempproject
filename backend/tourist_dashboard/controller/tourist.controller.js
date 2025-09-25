@@ -170,6 +170,7 @@ export const updateLocationController = async (req, res) => {
     //    We get the user's ID directly from the request.
     const userId = req.foreignTourist?._id || req.domesticTourist?._id;
     const { lat, lng } = req.body;
+    console.log("Updating location for userId:", userId, "to lat:", lat, "lng:", lng);
 
     // 2. A safety check to ensure we have a user ID and location data.
     if (!userId) {

@@ -46,8 +46,8 @@ router.get(
 //     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
 // ],authMiddleware,touristController.registerDomesticTouristController)
 
-router.post("/alert", authMiddleware, createAlert);
-router.get("/alerts", authMiddleware, getAllAlerts);
+router.post("/alert", authMiddleware, policeController.createAlert);
+router.get("/alert", authMiddleware, policeController.getAllAlerts);
 
 
 export default router;

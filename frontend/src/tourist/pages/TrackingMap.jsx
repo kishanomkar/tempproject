@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 // Note: You will need to create and provide these speech recognition functions
 // import { startListening, stopListening, getTranscript, resetAlert } from "../components/SpeechRecognition"; 
 import { dangerZones } from "../components/Dara"; 
-
+import { getTranscript,getAlert,resetAlert } from "../components/SpeechRecognition";
 // --- Custom Icons ---
 const userIcon = new L.DivIcon({
   className: 'user-location-icon',
@@ -86,6 +86,12 @@ export default function TrackingMap() {
 
   // Send location to the backend
   const updateLocation = async (lat, lng) => {
+
+    const token = localStorage.getItem("token");
+
+  // ✅ Save to localStorage
+  localStorage.setItem("lat", lat);
+  localStorage.setItem("lng", lng);
     try {
       const response = await fetch('http://localhost:4000/api/tourist/update-location', {
         method: 'POST',
@@ -97,6 +103,7 @@ export default function TrackingMap() {
       if (!response.ok) {
         console.error("Failed to update location:", data.message);
       }
+      
     } catch (error) {
       console.error("Error sending location update:", error);
     }
