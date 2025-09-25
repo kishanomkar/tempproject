@@ -23,6 +23,25 @@ if (SpeechRecognition) {
       // ✅ Always trigger alertFlag (no one-time lock)
       alertFlag = true;
       console.log("🚨 Emergency command detected!");
+     const token = localStorage.getItem("token"); 
+     const {lat,lng} = JSON.parse(localStorage.getItem("location"))
+
+ fetch("http://localhost:3000/police/alert", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // JWT middleware verify karega
+    },
+    body: JSON.stringify({
+      message: "Guardian Help Triggered",
+      location: { latitude: lat, longitude: lng },
+      timestamp: new Date().toISOString(),
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => console.log("✅ Alert sent to police:", data))
+    .catch((err) => console.error("❌ Error sending alert:", err));
+
     }
   };
 

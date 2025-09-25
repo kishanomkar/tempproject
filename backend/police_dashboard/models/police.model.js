@@ -51,6 +51,17 @@ const policeSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
+const alertSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  message: { type: String, required: true },
+  location: {
+    latitude: { type: Number },
+    longitude: { type: Number },
+  },
+  timestamp: { type: Date, default: Date.now },
+});
+
+
 policeSchema.statics.hashPassword = async function(password){
     return await bcrypt.hash(password,10)
 }
@@ -66,3 +77,4 @@ policeSchema.methods.generateAuthToken = function(){
 const Police = mongoose.model('Police',policeSchema);
 
 export default Police;
+export const Alert = mongoose.model('Alert', alertSchema);

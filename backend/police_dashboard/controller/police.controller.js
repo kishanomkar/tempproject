@@ -2,6 +2,7 @@ import {validationResult} from 'express-validator';
 import Police from '../models/police.model.js';
 import * as policeService from "../services/police.services.js"
 import { getAllTourists } from '../services/data.services.js';
+import { Alert } from '../models/police.model.js';
 import mongoose from 'mongoose';
 export const registerPoliceController = async (req, res) => {
     const errors = validationResult(req);
@@ -130,4 +131,37 @@ export const getAllTouristsController = async (req, res) => {
         console.error("Error in getAllTouristsController:", error);
         res.status(500).json({ message: "Server error while fetching tourist data" });
     }
+};
+
+export const createAlert = async (req, res) => {
+  try {
+    const { message, location, timestamp } = req.body;
+
+    // ✅ userId JWT ke payload se milega (purane middleware se)
+    const alert = new Alert({
+      userId: req.user.id,   // JWT banate waqt { id: user._id } bhejna zaruri hai
+      message,
+      location,
+      timestamp,
+    });
+
+    await alert.save();
+
+    res.json({ status: "ok", alert });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Get all alerts
+export const getAllAlerts = async (req, res) => {
+  try {
+    const alerts = await Alert.find()
+      .populate("userId", "username email")
+      .sort({ timestamp: -1 });
+
+    res.json(alerts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

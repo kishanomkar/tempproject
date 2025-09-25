@@ -30,6 +30,7 @@ app.use('/police', policeRouter);
 //     domesticQRData: qrDataStore.domesticQRData,
 //   });
 // });
+app.use("/police", policeRouter);
 
 
 

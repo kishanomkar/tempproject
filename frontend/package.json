@@ -10,12 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/react": "^3.27.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.13",
     "@turf/turf": "^7.2.0",
     "axios": "^1.11.0",
     "dotenv": "^17.2.2",
     "flowbite": "^3.1.2",
+    "framer-motion": "^12.23.21",
     "html5-qrcode": "^2.3.8",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^3.15.0",

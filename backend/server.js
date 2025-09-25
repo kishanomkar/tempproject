@@ -30,6 +30,8 @@ import { Server } from "socket.io";
 import { generateResponse } from "./tourist_dashboard/services/ai.service.js";
 import { response } from "express";
 
+
+
 /* ---------------- Helper: Auto-port fallback ---------------- */
 function startServer(createServerOrApp, port, name, isSocket = false) {
   // Agar Socket server hai to use directly, else create HTTP server
@@ -57,6 +59,8 @@ function startServer(createServerOrApp, port, name, isSocket = false) {
 
 const police_port = parseInt(process.env.POLICE_PORT) || 3000;
 startServer(app, police_port, "Police Server");
+
+
 
 const tourist_port = parseInt(process.env.TOURIST_PORT) || 4000;
 startServer(touristapp, tourist_port, "Tourist Server");

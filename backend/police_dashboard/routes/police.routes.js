@@ -2,6 +2,7 @@ import { Router }  from 'express';
 import { body } from 'express-validator';
 import * as policeController from '../controller/police.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
+import { createAlert, getAllAlerts } from '../controller/police.controller.js';
 // import * as touristController from '../controller/tourist.controller.js'
 
 
@@ -44,5 +45,9 @@ router.get(
 //     body('contactInformation.email').isEmail().withMessage('Invalid email format'),
 //     body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters long'),
 // ],authMiddleware,touristController.registerDomesticTouristController)
+
+router.post("/alert", authMiddleware, createAlert);
+router.get("/alerts", authMiddleware, getAllAlerts);
+
 
 export default router;

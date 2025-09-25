@@ -13,6 +13,7 @@ import ForeignTouristLogin from './tourist/pages/ForeignTouristLogin';
 import DomesticTouristLogin from './tourist/pages/DomesticTouristLogin';
 import Navbar from './tourist/components/Navbar';
 import PoliceLogin from './police_dashboard/pages/PoliceLogin';
+import PoliceAlertsDashboard from './police_dashboard/pages/PoliceAlert';
 
 
 export default function App() {
@@ -33,6 +34,8 @@ export default function App() {
         <Route path='/registerDomesticTourist' element={<DomesticTouristRegister />} />
         <Route path='/loginForeignTourist' element={<ForeignTouristLogin />} />
         <Route path='/loginDomesticTourist' element={<DomesticTouristLogin />} />
+        <Route path='/policeDashboard' element={<PoliceAlertsDashboard />} />
+
       </Routes>
     </div>
   );
