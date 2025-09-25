@@ -52,7 +52,8 @@ const policeSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const alertSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true, refPath: "userModel" },
+  userModel: { type: String, required: true, enum: ["foreignUser", "domesticUser"] }, // dynamic ref
   message: { type: String, required: true },
   location: {
     latitude: { type: Number },
@@ -60,6 +61,7 @@ const alertSchema = new mongoose.Schema({
   },
   timestamp: { type: Date, default: Date.now },
 });
+
 
 
 policeSchema.statics.hashPassword = async function(password){

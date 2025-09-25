@@ -139,14 +139,20 @@ export const createAlert = async (req, res) => {
 
     console.log("📩 Alert received:", message, location, timestamp);
 
-    // ✅ Get userId from JWT payload
-    const userId = req.user?.id; // middleware should attach req.user
-    if (!userId) {
-      return res.status(401).json({ error: "Unauthorized: No userId found" });
+    // ✅ Get userId and type from JWT payload
+    const userId = req.user?.id;
+    const userType = req.user?.type; // "Foreign" or "Domestic"
+
+    if (!userId || !userType) {
+      return res.status(401).json({ error: "Unauthorized: No userId or type found" });
     }
 
+    // ✅ Map JWT type to model names
+    const userModel = userType === "Foreign" ? "foreignUser" : "domesticUser";
+
     const alert = new Alert({
-      userId, // must exist in schema
+      userId,
+      userModel,
       message,
       location,
       timestamp,
@@ -160,16 +166,19 @@ export const createAlert = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 // Get all alerts
 export const getAllAlerts = async (req, res) => {
   try {
     const alerts = await Alert.find()
-      .populate("userId", "username email")
+      .populate({
+        path: "userId",
+        select: "fullname email nationality phoneNumber smartTouristId", // Tourist details
+      })
       .sort({ timestamp: -1 });
 
     res.json(alerts);
   } catch (err) {
+    console.error("❌ Error fetching alerts:", err);
     res.status(500).json({ error: err.message });
   }
 };
