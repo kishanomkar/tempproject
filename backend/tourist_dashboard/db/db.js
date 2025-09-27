@@ -1,0 +1,14 @@
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+
+function connectToDb() {
+    const connection = process.env.MONGO_URI;
+    mongoose.connect(connection).then(()=>{
+        console.log("Connected to Tourist MongoDB");
+    }).catch((err)=>{
+        console.log(`Error connecting to MongoDB: ${err.message}`);
+    })
+}
+
+export default connectToDb; 
