@@ -8,8 +8,36 @@ let alertFlag = false;
 let permissionDenied = false;
 let recognition = null;
 
-// --- Reusable function for sending alerts ---
+// 🔊 Siren audio object
+let sirenAudio = null;
 
+// --- Initialize siren (only once) ---
+function initSiren() {
+  if (!sirenAudio) {
+    sirenAudio = new Audio("/alert.mp3"); // Place alert.mp3 in public/
+    sirenAudio.loop = true; // repeat continuously
+  }
+}
+
+// --- Start playing siren ---
+function startSiren() {
+  initSiren();
+  sirenAudio
+    .play()
+    .then(() => console.log("🚨 Siren started"))
+    .catch((err) => console.error("❌ Siren play failed:", err));
+}
+
+// --- Stop siren ---
+export function stopSiren() {
+  if (sirenAudio) {
+    sirenAudio.pause();
+    sirenAudio.currentTime = 0; // reset
+    console.log("🛑 Siren stopped");
+  }
+}
+
+// --- Reusable function for sending alerts ---
 export async function sendAlert(trigger = "Guardian Help Triggered") {
   const token = localStorage.getItem("token");
   const lat = localStorage.getItem("lat");
@@ -37,15 +65,16 @@ export async function sendAlert(trigger = "Guardian Help Triggered") {
     const data = await res.json();
     console.log("✅ Alert sent to police:", data);
 
+    // 🔊 Start looping siren when alert is successfully sent
+    startSiren();
+
     // Reset flags
     alertFlag = false;
     setSosAlertFlag(false);
-
   } catch (err) {
     console.error("❌ Error sending alert:", err);
   }
 }
-
 
 if (SpeechRecognition) {
   recognition = new SpeechRecognition();
@@ -89,7 +118,7 @@ if (SpeechRecognition) {
   console.error("SpeechRecognition is not supported in this browser.");
 }
 
-// Control functions
+// --- Control functions ---
 export function startRecognition() {
   if (recognition && !permissionDenied) {
     recognition.start();
@@ -98,7 +127,7 @@ export function startRecognition() {
   }
 }
 
-// Accessors
+// --- Accessors ---
 export function getTranscript() {
   return transcript;
 }
