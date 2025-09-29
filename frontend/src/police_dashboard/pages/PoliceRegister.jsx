@@ -96,9 +96,9 @@ export default function PoliceRegister() {
     return (
         <div className="bg-slate-100 min-h-screen font-sans flex items-center justify-center p-4">
             <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1613219483842-99576a8d11d2?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1532375810709-75b1da00537c?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"}}>
                     <div className="h-full bg-slate-900/60 p-8 flex flex-col justify-end text-white">
-                        <h2 className="text-3xl font-bold">Nazar Protocol</h2>
+                        <h2 className="text-3xl font-bold">Divya Drishti Protocol</h2>
                         <p className="mt-2 text-slate-200">Secure registration for authorized law enforcement personnel.</p>
                     </div>
                 </div>

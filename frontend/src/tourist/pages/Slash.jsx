@@ -41,7 +41,7 @@ const SlashHome = () => {
     useEffect(() => {
         // Example: const fetchedTourist = await api.getTouristProfile();
         // setTourist(fetchedTourist);
-        setTourist({ fullname: "Alexandra" }); // Placeholder
+        setTourist({ fullname: "Kishan Omkar" }); // Placeholder
     }, []);
     
     // --- Initialize Map ---

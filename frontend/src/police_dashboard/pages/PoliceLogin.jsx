@@ -76,7 +76,7 @@ export default function PoliceLogin() {
         <div className="bg-slate-100 min-h-screen flex items-center justify-center p-4">
             <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
                 
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1599939335352-7d6d39634f19?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bGF3JTIwZW5mb3JjZW1lbnR8ZW58MHx8MHx8fDA%3D')"}}>
                      <div className="h-full bg-slate-900/60 p-8 flex flex-col justify-end text-white">
                         <h2 className="text-3xl font-bold">Divya Drishti Center</h2>
                         <p className="mt-2 text-slate-200">Authorized personnel only. Secure access to the live monitoring dashboard.</p>

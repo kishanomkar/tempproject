@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown"; // ✅ Added for rendering Markdown
 
 // --- Helper Components & Icons ---
 
@@ -69,10 +70,10 @@ const Chatbot = () => {
         <div className="bg-slate-100 min-h-screen flex items-center justify-center p-4 font-sans">
             <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[80vh]">
                 
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1593714878536-391bf397855b?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1673255745677-e36f618550d1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHJvYm90JTIwYWl8ZW58MHx8MHx8fDA%3D')"}}>
                     <div className="h-full bg-slate-900/60 p-8 flex flex-col justify-between text-white">
                         <div>
-                            <h2 className="text-3xl font-bold">Nazar Safety Assistant</h2>
+                            <h2 className="text-3xl font-bold">Divya Drishti Safety Assistant</h2>
                             <p className="mt-2 text-slate-200">Your AI-powered guide for a safe and enjoyable trip in Jaipur.</p>
                         </div>
                         <div className="text-sm text-slate-300">
@@ -113,7 +114,11 @@ const Chatbot = () => {
                                                 : "bg-white text-slate-700 rounded-bl-none border border-slate-200"
                                         }`}
                                     >
-                                        {msg.text}
+                                        {msg.sender === "bot" ? (
+                                            <ReactMarkdown>{msg.text}</ReactMarkdown> // ✅ Markdown rendering
+                                        ) : (
+                                            msg.text
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}

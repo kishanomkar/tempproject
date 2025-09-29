@@ -153,9 +153,9 @@ export default function ForeignTouristRegister() {
         <div className="bg-slate-100 min-h-screen font-sans flex items-center justify-center p-4">
             <div className="w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
                 {/* --- Left Panel: Image --- */}
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1599661046223-e06587154436?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1554554497-0095c34db3ec?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8dGVtcGxlfGVufDB8fDB8fHww')"}}>
                     <div className="h-full bg-slate-900/50 p-8 flex flex-col justify-end text-white">
-                        <h2 className="text-3xl font-bold">Welcome to Jaipur</h2>
+                        <h2 className="text-3xl font-bold">Welcome to India</h2>
                         <p className="mt-2 text-slate-200">Your safety is our priority. Register to access real-time alerts and location services.</p>
                     </div>
                 </div>

@@ -49,13 +49,13 @@ const Slash = () => {
 
     // --- MOCK DATA (replace with your API calls) ---
     const stats = {
-        total: 1245,
-        domestic: 873,
-        foreign: 372,
-        alerts: 3,
+        total: 8,
+        domestic: 4,
+        foreign: 4,
+        alerts: 1,
     };
     const weather = {
-        temp: 32,
+        temp: 28,
         condition: "Clear skies",
         suggestion: "Sunny conditions may lead to larger crowds at outdoor heritage sites like Amber Fort and Hawa Mahal. Monitor these areas closely."
     };
@@ -131,8 +131,8 @@ const Slash = () => {
                         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
                              <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
                              <div className="space-y-2">
-                                <button onClick={() => navigate('/send-alert')} className="w-full text-left font-medium text-blue-600 hover:bg-gray-100 p-2 rounded-lg">Dispatch New Alert</button>
-                                <button onClick={() => navigate('/alerts')} className="w-full text-left font-medium text-blue-600 hover:bg-gray-100 p-2 rounded-lg">View Full Alert Log</button>
+                                <button onClick={() => navigate('/police/send-alert')} className="w-full text-left font-medium text-blue-600 hover:bg-gray-100 p-2 rounded-lg">Dispatch New Alert</button>
+                                <button onClick={() => navigate('/police/alerts')} className="w-full text-left font-medium text-blue-600 hover:bg-gray-100 p-2 rounded-lg">View Full Alert Log</button>
                              </div>
                         </div>
                     </div>

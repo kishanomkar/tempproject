@@ -99,7 +99,7 @@ export default function ForeignLoginForm() {
             <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
                 
                 {/* --- Left Panel: Image --- */}
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1599661046223-e06587154436?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://plus.unsplash.com/premium_photo-1691030925341-71b0a6994815?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8a2VkYXJuYXRoJTIwdGVtcGxlfGVufDB8fDB8fHww')"}}>
                      <div className="h-full bg-slate-900/50 p-8 flex flex-col justify-end text-white">
                         <h2 className="text-3xl font-bold">Secure International Login</h2>
                         <p className="mt-2 text-slate-200">Access your personalized travel dashboard and safety features.</p>

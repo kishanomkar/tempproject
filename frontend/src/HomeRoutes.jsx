@@ -24,7 +24,7 @@ export default function HomeRoutes() {
         <Route path='trackMembers' element={<TrackingMembers />} />
         <Route path='/home/identify' element={<LandmarkIdentifier />} /> {/* Placeholder for Identify page */}
         <Route path='/home/alerts' element={<Alerts />} />
-        <Route path='/home/slash' element={<SlashHome />} />
+        <Route path='/home/' element={<SlashHome />} />
         <Route path='/home/chatbot' element={<Chatbot />} />
       </Route>
     </Routes>

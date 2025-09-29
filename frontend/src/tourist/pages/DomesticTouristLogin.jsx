@@ -67,7 +67,7 @@ export default function DomesticLoginForm() {
             localStorage.setItem("DomesticTouristId", data.domesticTourist._id);
             localStorage.setItem("touristEmail", data.domesticTourist.email);
             
-            navigate("/home/trackyourlocation");
+            navigate("/home/");
 
         } catch (err) {
             console.error("Login error:", err);
@@ -82,7 +82,7 @@ export default function DomesticLoginForm() {
             <div className="w-full max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
                 
                 {/* --- Left Panel: Image --- */}
-                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1603261375225-b6d8a4a7a8d5?q=80&w=1887&auto=format&fit=crop')"}}>
+                <div className="hidden md:block bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1679254165381-a4c0c0a7e73e?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGhhd2FtYWhhbHxlbnwwfHwwfHx8MA%3D%3D')"}}>
                      <div className="h-full bg-slate-900/50 p-8 flex flex-col justify-end text-white">
                         <h2 className="text-3xl font-bold">Secure Login</h2>
                         <p className="mt-2 text-slate-200">Access your personalized travel dashboard and safety features.</p>

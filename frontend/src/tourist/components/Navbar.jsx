@@ -106,15 +106,15 @@ const navItems = [
       <div className=' flex flex-col items-center justify-start  bg-gray-100  overflow-hidden w-screen z-500' >
         <div className='w-full '>
           <nav className=" flex items-center justify-between bg-white p-3 shadow-lg border border-gray-200">
-            {/* Logo Section */}
-            <div className="flex-shrink-0">
-              <Link  className="flex items-center text-lg font-bold">
-                <img src="https://placehold.co/40x40/E5E7EB/4B5563?text=Logo" alt="logo" className="w-10 h-10 mr-2 rounded-md" />
-                <span>Logo</span>
-              </Link>
-            </div>
             
-            {/* Desktop Nav Items (visible on sm screens and up) */}
+                  <div className="flex-shrink-0">
+                    <Link to="/home/slash" className="flex items-center text-lg font-bold">
+                    <img src="/logo.png" alt="logo" className="w-10 h-10 mr-2 rounded-md" />
+                    <span>tripShield</span>
+                    </Link>
+                  </div>
+                  
+                  {/* Desktop Nav Items (visible on sm screens and up) */}
             <div className='hidden lg:flex items-center gap-2'>
               {navItems.map((item) => (
                 <NavItem

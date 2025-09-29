@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useNavigate } from 'react-router-dom';
+import PoliceMainLayout from '../components/PoliceNavbar';
 
 // It's good practice to place styles in a separate CSS file,
 // but for this self-contained example, we'll inject them here.
@@ -182,7 +183,7 @@ export default function Nazar() {
 
 
     return (
-        <>
+        <>   
             <MarkerStyles />
             <div className="flex h-screen bg-gray-100 font-sans">
                 {/* Main Map Area */}
@@ -191,7 +192,7 @@ export default function Nazar() {
                 {/* Sidebar */}
                 <aside className="w-96 bg-white shadow-2xl flex flex-col">
                     <div className="p-6 border-b border-gray-200">
-                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">NAZAR</h1>
+                        <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Divya Drishti</h1>
                         <p className="text-gray-500">Live Tourist Monitoring Dashboard</p>
                     </div>
 

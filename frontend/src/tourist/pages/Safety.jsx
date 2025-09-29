@@ -325,6 +325,7 @@ const callAmbulance = () => { window.location.href = "tel:108"; }; // Ambulance 
 const callPolice = () => { window.location.href = "tel:100"; };    // Police India
 const callFire = () => { window.location.href = "tel:101"; };      // Fire Brigade
 const callWomenHelpline = () => { window.location.href = "tel:1091"; }; // Women Helpline
+const callChildHelpline = () => { window.location.href = "tel:1098"; }; // Child Helpline
 
 // --- Main Safety Component ---
 const Safety = () => {
@@ -337,7 +338,7 @@ const Safety = () => {
         const getRandomRisk = () => riskLevels[Math.floor(Math.random() * 3)];
         
         return {
-            location: { city: 'Hawa Mahal Area', lastUpdated: new Date().toLocaleTimeString() },
+            location: { city: 'Jaipur', lastUpdated: new Date().toLocaleTimeString() },
             safetyScore: { score: Math.floor(Math.random() * 15) + 80 },
             risks: [
                 { name: 'Overall Safety', value: new Date().getHours() > 19 || new Date().getHours() < 6 ? 'Excellent' : 'Good' },
@@ -435,8 +436,9 @@ const Safety = () => {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <button onClick={callAmbulance} className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold">🚑 Ambulance</button>
                             <button onClick={callPolice} className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold">👮 Police</button>
-                            <button onClick={callFire} className="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">🔥 Fire</button>
+                            {/* <button onClick={callFire} className="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">🔥 Fire</button> */}
                             <button onClick={callWomenHelpline} className="px-4 py-2 bg-pink-600 text-white rounded-lg font-semibold">👩 Women Helpline</button>
+                            <button onClick={callChildHelpline} className="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold">🧒 Child Helpline</button>
                         </div>
                     </InfoCard>
                 </div>

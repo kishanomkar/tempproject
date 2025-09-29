@@ -16,6 +16,7 @@ import PoliceLogin from './police_dashboard/pages/PoliceLogin';
 import PoliceDashboard from './police_dashboard/pages/PoliceAlert';
 import SendAlert from './police_dashboard/pages/SendAlert';
 import Slash from './police_dashboard/pages/Slash';
+import PoliceMainLayout from './police_dashboard/components/PoliceNavbar';
 
 
 export default function App() {
@@ -26,19 +27,26 @@ export default function App() {
 
 
       <Routes>
+        {/* Routes without the police navbar */}
         <Route path='/police' element={<PoliceRegister />} />
         <Route path='/policeLogin' element={<PoliceLogin />} />
-        <Route path='/nazar' element={<TouristDashboard />} />
-        <Route path='/tourist/:id' element={<TouristProfile />} />
+        <Route path='/' element={<Slash />} />
+
+        {/* Routes with the police navbar */}
+        <Route element={<PoliceMainLayout />}>
+          <Route path='/nazar' element={<TouristDashboard />} />
+          <Route path='/police/alerts' element={<PoliceDashboard />} />
+          <Route path='/police/send-alert' element={<SendAlert />} />
+          <Route path='/tourist/:id' element={<TouristProfile />} />
+        </Route>
+
+        {/* Tourist routes */}
         <Route path='/data' element={<QRCamera />} />
         <Route path='/diversion' element={<SelectionPage />} />
         <Route path='/registerForeignTourist' element={<ForeignTouristRegister />} />
         <Route path='/registerDomesticTourist' element={<DomesticTouristRegister />} />
         <Route path='/loginForeignTourist' element={<ForeignTouristLogin />} />
         <Route path='/loginDomesticTourist' element={<DomesticTouristLogin />} />
-        <Route path='/policeDashboard' element={<PoliceDashboard />} />
-        <Route path='/sendAlert' element={<SendAlert />} />
-        <Route path='/' element={<Slash />} />
 
       </Routes>
     </div>
