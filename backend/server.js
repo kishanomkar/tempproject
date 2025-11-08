@@ -1,24 +1,3 @@
-// import dotenv from "dotenv";
-// dotenv.config();
-
-// import http from "http"
-// import app from "./police_dashboard/app.js"
-// import touristapp from "./tourist_dashboard/app.js";
-
-// const police_server = http.createServer(app)
-// const police_port = process.env.POLICE_PORT || 3000
-// const tourist_server = http.createServer(touristapp)
-// const tourist_port = process.env.TOURIST_PORT || 4000
-
-// police_server.listen(police_port,()=>{
-//     console.log(`Police Server is running on port ${police_port}`);
-// }) 
-
-// tourist_server.listen(tourist_port,()=>{
-//     console.log(`Tourist Server is running on port ${tourist_port}`);
-// })
-
-
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -73,26 +52,37 @@ const io = new Server(httpSocketServer, { cors: { origin: "*" } });
 const chatHistory = [];
 
 io.on("connection", (socket) => {
-  console.log("A user connected");
+  console.log("A user connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("A user disconnected");
+    console.log("A user disconnected:", socket.id);
   });
 
-  socket.on("ai-message", async (data) => {
-    console.log("Ai message received:", data);
+  // ✅ JOIN ROOM by region + nationality
+  socket.on("join-room", ({ region, nationality }) => {
+    const roomId = `${region}-${nationality}`; // e.g. India-Delhi
+    socket.join(roomId);
+    console.log(`User joined room: ${roomId}`);
+  });
 
+  // ✅ Community messages send to only that room
+  socket.on("community-message", ({ room, name, text }) => {
+    const msgData = { name, text, room };
+    io.to(room).emit("community-message", msgData);
+  });
+
+  // ✅ AI chat code (kept separate & safe)
+  socket.on("ai-message", async (data) => {
+    console.log("AI message received:", data);
     chatHistory.push({ role: "user", parts: [{ text: data }] });
 
-    const response = await generateResponse(chatHistory);
+    const aiRes = await generateResponse(chatHistory);
+    chatHistory.push({ role: "model", parts: [{ text: aiRes }] });
 
-    chatHistory.push({ role: "model", parts: [{ text: response }] });
-
-    socket.emit("ai-message-response", response);
+    socket.emit("ai-message-response", aiRes);
   });
-
-  
 });
+
 
 
 startServer(httpSocketServer, socket_port, "Socket Server", true);

@@ -11,13 +11,16 @@ import LandmarkIdentifier from './tourist/pages/LandmartIdentify';
 import Profile from './tourist/pages/Profile';
 import SlashHome from './tourist/pages/Slash';
 import Chatbot from './tourist/pages/Chatbot';
+import ProFeature from './tourist/pages/ProFeature';
+import Upgrade from './tourist/pages/Upgrade';
+import CommunityChat from './tourist/pages/CommunityChat';
 
 export default function HomeRoutes() {
   return (
     <Routes>
       <Route path='/home' element={<MainLayout />}>
         <Route path='/home/trackyourlocation' element={<TrackingMap />} /> {/* Set a default route */}
-        <Route path='safety' element={<Safety />} />
+        <Route path='/home/safety' element={<Safety />} />
         <Route path='emergency' element={<Emergency />} />
         <Route path='tracking' element={<TrackingMap />} />
         <Route path='/home/profile' element={<Profile />} />
@@ -26,7 +29,10 @@ export default function HomeRoutes() {
         <Route path='/home/alerts' element={<Alerts />} />
         <Route path='/home/' element={<SlashHome />} />
         <Route path='/home/chatbot' element={<Chatbot />} />
+        <Route path='/home/getpremiumfeatures' element={<ProFeature />} />
+        <Route path='/home/upgrade' element={<Upgrade />} />
+        <Route path='/home/communitychat' element={<CommunityChat />} />
       </Route>
     </Routes>
   );
-}
+} 
