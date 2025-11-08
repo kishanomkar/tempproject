@@ -316,7 +316,7 @@ const Safety = () => {
                         title="Current Location" 
                         className="lg:col-span-2"
                     >
-                        <h3 className="text-4xl font-bold text-gray-800">{safetyData.location?.city}</h3>
+                        <h3 className="text-4xl font-bold text-gray-800">Malviya Nagar</h3>
                         <p className="text-gray-600">Jaipur, Rajasthan, India</p>
                     </InfoCard>
                     
