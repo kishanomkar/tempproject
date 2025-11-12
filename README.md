@@ -11,12 +11,14 @@ It integrates AI, Geo-Fencing, and Blockchain-based Digital ID to ensure 24/7 pr
 By combining real-time monitoring, predictive alerts, and automated digital reporting, TripShield enhances traveler confidence and supports authorities in ensuring a secure tourism experience.
 
 🔒 Security & Smart Monitoring
+
 🔐 Blockchain-based Digital KYC ID for secure tourist identity verification.
 🤖 AI-powered anomaly detection to identify unusual or risky behavior patterns.
 📍 Geo-Fencing alerts to track and notify boundary breaches or unsafe zones.
 ⚡ Real-time communication powered by Socket.IO, enabling instant data exchange between tourists, monitoring centers, and responders.
 
 🚓 Law Enforcement Integration
+
 🚨 Direct connectivity with the nearest police station for rapid emergency response.
 📝 Automated e-FIR registration using verified blockchain identities.
 ⚖️ Hierarchical escalation mechanism ensures incidents are prioritized and addressed efficiently based on severity.
