@@ -13,14 +13,19 @@ By combining real-time monitoring, predictive alerts, and automated digital repo
 🔒 Security & Smart Monitoring
 
 🔐 Blockchain-based Digital KYC ID for secure tourist identity verification.
+
 🤖 AI-powered anomaly detection to identify unusual or risky behavior patterns.
+
 📍 Geo-Fencing alerts to track and notify boundary breaches or unsafe zones.
+
 ⚡ Real-time communication powered by Socket.IO, enabling instant data exchange between tourists, monitoring centers, and responders.
 
 🚓 Law Enforcement Integration
 
 🚨 Direct connectivity with the nearest police station for rapid emergency response.
+
 📝 Automated e-FIR registration using verified blockchain identities.
+
 ⚖️ Hierarchical escalation mechanism ensures incidents are prioritized and addressed efficiently based on severity.
 
 💡 Vision
@@ -28,8 +33,11 @@ TripShield aims to build trust, safety, and confidence in travel by empowering b
 By merging advanced technology with social impact, TripShield strives to redefine smart tourism and strengthen India’s reputation as a safe global travel destination.
 
 🧠 Tech Insights
+
 🤖 AI — Behavioral anomaly detection & predictive alert generation
+
 🔗 Blockchain — Secure digital identity & tamper-proof reporting
+
 ⚡ Socket.IO — Real-time data synchronization & alert delivery
 
 <img width="618" height="605" alt="{83016F62-2EEF-4084-98A8-A20792E8C7FC}" src="https://github.com/user-attachments/assets/dd4322e5-d383-4b60-b8a0-eb48b8164223" />
